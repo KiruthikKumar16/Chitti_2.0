@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
+using LineBuddy.Services.Actions;
 
 namespace LineBuddy.Services
 {
@@ -11,6 +12,9 @@ namespace LineBuddy.Services
         private readonly LLMService _llm;
         private readonly ActionService _actions;
         private readonly AppSettings _settings;
+        private readonly Dictionary<string, IActionHandler> _registry;
+        private static string _lastPlannedInput = string.Empty;
+        private static string _lastPlanJson = string.Empty;
 
         private static readonly HashSet<string> AllowedSafe = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -28,6 +32,23 @@ namespace LineBuddy.Services
             _llm = llm;
             _actions = actions;
             _settings = settings;
+            _registry = new Dictionary<string, IActionHandler>(System.StringComparer.OrdinalIgnoreCase)
+            {
+                { "openUrl", new OpenUrlAction() },
+                { "searchWeb", new SearchWebAction() },
+                { "utubeAutoPlay", new UtubeAutoPlayAction() },
+                { "notepad", new NotepadAction() },
+                { "timer", new TimerAction() },
+                { "screenshot", new ScreenshotAction() },
+                { "volume", new VolumeAction() },
+                { "focus", new FocusAction() },
+                { "break", new BreakAction() },
+                { "searchImages", new SearchImagesAction() },
+                { "localPlay", new LocalPlayAction() },
+                { "openFolder", new OpenFolderAction() },
+                { "revealFile", new RevealFileAction() },
+                { "appLaunch", new AppLaunchAction() }
+            };
         }
 
         public async Task<(bool handled, string message, bool needsConfirm, Func<Task<string>> confirmAction)> HandleAsync(string input)
@@ -162,7 +183,19 @@ namespace LineBuddy.Services
                 return (true, msg, false, null);
             }
 
-            var planJson = await _llm.QueryActionsAsync(input);
+            string planJson;
+            if (string.Equals(input, _lastPlannedInput, StringComparison.OrdinalIgnoreCase))
+            {
+                planJson = _lastPlanJson;
+            }
+            else
+            {
+                var planTask = _llm.QueryActionsAsync(input);
+                var completed = await Task.WhenAny(planTask, Task.Delay(1200));
+                planJson = completed == planTask ? planTask.Result : string.Empty;
+                _lastPlannedInput = input;
+                _lastPlanJson = planJson;
+            }
             if (string.IsNullOrWhiteSpace(planJson)) return (false, string.Empty, false, null);
 
             if (!TryParsePlan(planJson, out var action, out var args, out var risk))
@@ -174,6 +207,7 @@ namespace LineBuddy.Services
             if (isSafe)
             {
                 if (!AllowedSafe.Contains(action)) return (false, string.Empty, false, null);
+                if (!IsActionEnabledBySettings(action)) return (true, "⚠️ Action disabled in settings", false, null);
                 var msg = await ExecuteAsync(action, args);
                 return (true, msg, false, null);
             }
@@ -183,6 +217,38 @@ namespace LineBuddy.Services
                 if (!_settings.AllowRiskyActionsWithConfirmation) return (false, string.Empty, false, null);
                 // Prepare confirm callback
                 return (true, $"Confirm: {action}?", true, async () => await ExecuteAsync(action, args));
+            }
+        }
+
+        private bool IsActionEnabledBySettings(string action)
+        {
+            switch (action.ToLower())
+            {
+                case "utubeautoplay":
+                case "localplay":
+                    return _settings.EnableMediaActions;
+                case "searchweb":
+                case "searchimages":
+                case "openurl":
+                    return _settings.EnableSearchActions;
+                case "notepad":
+                    return _settings.EnableNotes;
+                case "timer":
+                    return _settings.EnableTimers;
+                case "screenshot":
+                    return _settings.EnableScreenshots;
+                case "volume":
+                    return _settings.EnableVolume;
+                case "focus":
+                case "break":
+                    return _settings.EnableFocusBreak;
+                case "openfolder":
+                case "revealfile":
+                    return _settings.EnableFoldersFiles;
+                case "applaunch":
+                    return _settings.EnableAppLaunch;
+                default:
+                    return true;
             }
         }
 
@@ -202,6 +268,11 @@ namespace LineBuddy.Services
 
         private async Task<string> ExecuteAsync(string action, JObject args)
         {
+            if (_registry.TryGetValue(action, out var handler))
+            {
+                return await handler.ExecuteAsync(args);
+            }
+
             switch (action.ToLower())
             {
                 case "openurl":

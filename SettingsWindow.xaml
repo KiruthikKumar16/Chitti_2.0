@@ -394,18 +394,24 @@
                     <StackPanel Margin="20">
                         <TextBlock Text="Configure dynamic action execution and confirmation policy." Foreground="White" Margin="0,0,0,10"/>
                         <CheckBox Content="Allow risky actions with confirmation (lock, sleep)" IsChecked="True" Foreground="White"/>
-                        <TextBlock Text="Chitti can perform these actions:" Foreground="White" Margin="10,10,0,5"/>
+                        <TextBlock Text="Chitti can perform these actions (toggle to allow):" Foreground="White" Margin="10,10,0,5"/>
                         <StackPanel Margin="20,0,0,0">
-                            <TextBlock Text="• Play media: YouTube auto-play, YouTube Music, Spotify, local files" Foreground="LightGray"/>
-                            <TextBlock Text="• Search: web, images (Google/Bing/DDG)" Foreground="LightGray"/>
-                            <TextBlock Text="• Open: URLs, sites, queries" Foreground="LightGray"/>
-                            <TextBlock Text="• Notes: open notepad with provided text" Foreground="LightGray"/>
-                            <TextBlock Text="• Timers: set timers (e.g., 5m, 30s, 1h)" Foreground="LightGray"/>
-                            <TextBlock Text="• Screenshots: capture and open file location" Foreground="LightGray"/>
-                            <TextBlock Text="• Volume: up, down, mute, unmute" Foreground="LightGray"/>
-                            <TextBlock Text="• Focus/Break: quick session helpers" Foreground="LightGray"/>
-                            <TextBlock Text="• Risky (confirm): lock, sleep" Foreground="LightGray"/>
-                            <TextBlock Text="• Blocked: delete files, arbitrary shell, shutdown" Foreground="LightGray"/>
+                            <CheckBox Content="Media: YouTube auto-play, YouTube Music, Spotify, local files" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="Search: web, images (Google/Bing/DDG)" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="Open: URLs, sites, queries" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="Notes: open notepad with provided text" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="Timers: set timers (e.g., 5m, 30s, 1h)" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="Screenshots: capture and open file location" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="Volume: up, down, mute, unmute" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="Focus/Break: quick session helpers" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="Folders/Files: open Downloads/Documents, reveal file by name" IsChecked="True" Foreground="LightGray"/>
+                            <CheckBox Content="App Launch: calculator/paint/notepad or a known app" IsChecked="True" Foreground="LightGray"/>
+                            <TextBlock Text="Limits:" Foreground="White" Margin="0,10,0,5"/>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Max open tabs:" Foreground="LightGray" VerticalAlignment="Center"/>
+                                <TextBox Width="40" Height="22" Margin="5,0,0,0" Text="5"/>
+                            </StackPanel>
+                            <TextBlock Text="Risky (confirm): lock, sleep. Blocked: delete files, shell, shutdown." Foreground="LightGray" Margin="0,10,0,0"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

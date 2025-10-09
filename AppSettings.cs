@@ -63,6 +63,16 @@ namespace LineBuddy
         
         // Automation & Safety
         public bool AllowRiskyActionsWithConfirmation { get; set; } = true;
+        public bool EnableMediaActions { get; set; } = true;
+        public bool EnableSearchActions { get; set; } = true;
+        public bool EnableNotes { get; set; } = true;
+        public bool EnableTimers { get; set; } = true;
+        public bool EnableScreenshots { get; set; } = true;
+        public bool EnableVolume { get; set; } = true;
+        public bool EnableFocusBreak { get; set; } = true;
+        public bool EnableFoldersFiles { get; set; } = true;
+        public bool EnableAppLaunch { get; set; } = true;
+        public int MaxOpenTabs { get; set; } = 5;
         
         private static readonly string SettingsPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),

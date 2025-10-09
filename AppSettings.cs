@@ -17,7 +17,9 @@ namespace LineBuddy
             "WeatherUpdates",
             "StockUpdates", 
             "CryptoUpdates",
-            "TechNews"
+            "TechNews",
+            "Quotes",
+            "Jokes"
         };
         
         public bool ShowTimeBasedMessages { get; set; } = true;
@@ -114,6 +116,8 @@ namespace LineBuddy
             if (ShowStockUpdates) activeTypes.Add("StockUpdates");
             if (ShowCryptoUpdates) activeTypes.Add("CryptoUpdates");
             if (ShowTechNews) activeTypes.Add("TechNews");
+            if (EnabledMessageTypes.Contains("Quotes")) activeTypes.Add("Quotes");
+            if (EnabledMessageTypes.Contains("Jokes")) activeTypes.Add("Jokes");
             
             return activeTypes.Count > 0 ? activeTypes : new List<string> { "TimeBasedMessages" };
         }

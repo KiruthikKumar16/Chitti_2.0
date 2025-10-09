@@ -62,6 +62,8 @@ namespace LineBuddy.Services
                 "NetworkStatus" => GetNetworkStatusMessage(),
                 "TechNews" => await GetTechNewsMessageAsync(),
                 "ProductivityTips" => GetProductivityMessage(),
+                "Quotes" => await GetQuoteMessageAsync(),
+                "Jokes" => await GetJokeMessageAsync(),
                 _ => GetTimeBasedMessage()
             };
         }
@@ -87,16 +89,25 @@ namespace LineBuddy.Services
         {
             try
             {
-                // Using a free weather API (OpenWeatherMap free tier)
-                // Note: Replace with actual API key
-                var response = await _httpClient.GetStringAsync("https://api.openweathermap.org/data/2.5/weather?q=London&appid=demo&units=metric");
-                var weather = JsonConvert.DeserializeObject<WeatherResponse>(response);
-                return $"🌤️ {weather.Main.Temp:F0}°C, {weather.Weather[0].Description} - Perfect day!";
+                // Geocode location using Open-Meteo Geocoding (no key)
+                var location = string.IsNullOrWhiteSpace(_settings.WeatherLocation) ? "London" : _settings.WeatherLocation;
+                var geoUrl = $"https://geocoding-api.open-meteo.com/v1/search?name={Uri.EscapeDataString(location)}&count=1";
+                var geoJson = await _httpClient.GetStringAsync(geoUrl);
+                dynamic geo = JsonConvert.DeserializeObject(geoJson);
+                double lat = (double)(geo?.results?[0]?.latitude ?? 51.5072);
+                double lon = (double)(geo?.results?[0]?.longitude ?? -0.1276);
+
+                // Fetch current weather from Open-Meteo (no key)
+                var weatherUrl = $"https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&current_weather=true";
+                var wJson = await _httpClient.GetStringAsync(weatherUrl);
+                dynamic w = JsonConvert.DeserializeObject(wJson);
+                double temp = (double)(w?.current_weather?.temperature ?? 20);
+                double wind = (double)(w?.current_weather?.windspeed ?? 0);
+                return $"🌤️ {temp:F0}°C, wind {wind:F0} km/h";
             }
             catch
             {
-                var temp = _random.Next(15, 25);
-                return $"🌤️ ~{temp}°C outside - Have a great day!";
+                return "🌤️ Weather unavailable right now";
             }
         }
 
@@ -104,20 +115,16 @@ namespace LineBuddy.Services
         {
             try
             {
-                var stockList = _settings.StockWatchlist;
-                if (stockList.Count == 0)
-                    return "📊 Add stocks to your watchlist in settings!";
-                    
-                var symbol = stockList[_random.Next(stockList.Count)];
-                // Mock stock data (replace with real API)
-                var price = _random.Next(100, 300) + _random.NextDouble();
-                var change = (_random.NextDouble() - 0.5) * 10;
-                var direction = change >= 0 ? "📈" : "📉";
-                return $"{direction} {symbol}: ${price:F2} ({change:+0.00;-0.00})";
+                // Replace stocks with exchange rates (free, no key)
+                var fxJson = await _httpClient.GetStringAsync("https://api.exchangerate.host/latest?base=USD&symbols=EUR,INR,JPY");
+                dynamic fx = JsonConvert.DeserializeObject(fxJson);
+                double eur = (double)(fx?.rates?.EUR ?? 0);
+                double inr = (double)(fx?.rates?.INR ?? 0);
+                return $"💱 USD→EUR {eur:F2}, USD→INR {inr:F2}";
             }
             catch
             {
-                return "📊 Markets are active today - Stay informed!";
+                return "💱 FX rates unavailable";
             }
         }
 
@@ -125,23 +132,31 @@ namespace LineBuddy.Services
         {
             try
             {
-                var cryptoList = _settings.CryptoWatchlist;
-                if (cryptoList.Count == 0)
-                    return "₿ Add cryptocurrencies to your watchlist in settings!";
-                    
-                var crypto = cryptoList[_random.Next(cryptoList.Count)];
-                // Mock crypto data
-                var price = crypto switch
+                // CoinGecko simple price (no key)
+                var ids = _settings.CryptoWatchlist.Count > 0 ? string.Join(",", _settings.CryptoWatchlist) : "bitcoin,ethereum";
+                var url = $"https://api.coingecko.com/api/v3/simple/price?ids={Uri.EscapeDataString(ids)}&vs_currencies=usd";
+                var json = await _httpClient.GetStringAsync(url);
+                dynamic prices = JsonConvert.DeserializeObject(json);
+                if (prices == null) return "₿ Crypto unavailable";
+                if (prices.bitcoin != null)
                 {
-                    "bitcoin" => _random.Next(40000, 70000),
-                    "ethereum" => _random.Next(2000, 4000),
-                    _ => _random.Next(1, 100)
-                };
-                return $"₿ {crypto.ToUpper()}: ${price:N0} - Crypto never sleeps!";
+                    double btc = (double)(prices.bitcoin.usd ?? 0);
+                    return $"₿ BTC ${btc:N0}";
+                }
+                foreach (var id in _settings.CryptoWatchlist)
+                {
+                    var node = prices[id];
+                    if (node != null)
+                    {
+                        double px = (double)(node.usd ?? 0);
+                        return $"₿ {id.ToUpper()} ${px:N0}";
+                    }
+                }
+                return "₿ Crypto unavailable";
             }
             catch
             {
-                return "₿ Crypto markets buzzing - Keep watching!";
+                return "₿ Crypto unavailable";
             }
         }
 
@@ -182,19 +197,16 @@ namespace LineBuddy.Services
 
         private async Task<string> GetTechNewsMessageAsync()
         {
-            // Mock tech news headlines
-            var headlines = new[]
+            try
             {
-                "🚀 AI breakthrough in quantum computing announced",
-                "💡 New programming language trending on GitHub",
-                "🔧 Microsoft releases major Windows update",
-                "📱 Apple unveils innovative hardware features",
-                "🤖 OpenAI announces ChatGPT improvements",
-                "⚡ Tesla stock surges on autopilot news",
-                "🔒 Major cybersecurity patch released today"
-            };
-            
-            return headlines[_random.Next(headlines.Length)];
+                // Hacker News Algolia front page (no key)
+                var json = await _httpClient.GetStringAsync("https://hn.algolia.com/api/v1/search?tags=front_page");
+                dynamic data = JsonConvert.DeserializeObject(json);
+                string title = data?.hits?[0]?.title;
+                if (!string.IsNullOrWhiteSpace(title)) return $"📰 {title}";
+            }
+            catch { }
+            return "📰 Tech news unavailable";
         }
 
         private string GetProductivityMessage()
@@ -211,6 +223,36 @@ namespace LineBuddy.Services
             };
             
             return messages[_random.Next(messages.Length)];
+        }
+
+        private async Task<string> GetQuoteMessageAsync()
+        {
+            try
+            {
+                var json = await _httpClient.GetStringAsync("https://zenquotes.io/api/random");
+                dynamic arr = JsonConvert.DeserializeObject(json);
+                string q = arr?[0]?.q;
+                string a = arr?[0]?.a;
+                if (!string.IsNullOrWhiteSpace(q) && !string.IsNullOrWhiteSpace(a))
+                    return $"💬 \"{q}\" — {a}";
+            }
+            catch { }
+            return "💬 Keep going—small steps add up";
+        }
+
+        private async Task<string> GetJokeMessageAsync()
+        {
+            try
+            {
+                var json = await _httpClient.GetStringAsync("https://official-joke-api.appspot.com/jokes/random");
+                dynamic joke = JsonConvert.DeserializeObject(json);
+                string setup = joke?.setup;
+                string punch = joke?.punchline;
+                if (!string.IsNullOrWhiteSpace(setup) && !string.IsNullOrWhiteSpace(punch))
+                    return $"😄 {setup} — {punch}";
+            }
+            catch { }
+            return "😄 A smile is loading...";
         }
 
         private int GetRAMUsage()
@@ -231,8 +273,16 @@ namespace LineBuddy.Services
 
         private int GetCPUUsage()
         {
-            // Simplified CPU usage - in real implementation, use PerformanceCounter
-            return _random.Next(10, 50);
+            try
+            {
+                using var searcher = new ManagementObjectSearcher("SELECT LoadPercentage FROM Win32_Processor");
+                foreach (ManagementObject obj in searcher.Get())
+                {
+                    return Convert.ToInt32(obj["LoadPercentage"]);
+                }
+            }
+            catch { }
+            return 0;
         }
 
         private int GetNetworkLatency()

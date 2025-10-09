@@ -258,12 +258,177 @@ namespace LineBuddy
             });
         }
 
+        private TimeSpan ParseDuration(string token)
+        {
+            if (string.IsNullOrWhiteSpace(token)) return TimeSpan.FromMinutes(5);
+            token = token.ToLower().Trim();
+            if (token.EndsWith("ms") && int.TryParse(token[..^2], out var ms)) return TimeSpan.FromMilliseconds(ms);
+            if (token.EndsWith("s") && int.TryParse(token[..^1], out var s)) return TimeSpan.FromSeconds(s);
+            if (token.EndsWith("m") && int.TryParse(token[..^1], out var m)) return TimeSpan.FromMinutes(m);
+            if (token.EndsWith("h") && int.TryParse(token[..^1], out var h)) return TimeSpan.FromHours(h);
+            if (int.TryParse(token, out var minutes)) return TimeSpan.FromMinutes(minutes);
+            return TimeSpan.FromMinutes(5);
+        }
+
         private async Task ProcessQuery()
         {
             if (string.IsNullOrWhiteSpace(QueryTextBox.Text))
                 return;
 
-            var query = QueryTextBox.Text;
+            var query = QueryTextBox.Text.Trim();
+
+            // Command routing for /play and /open (no network keys)
+            if (query.StartsWith("/open ", StringComparison.OrdinalIgnoreCase))
+            {
+                var remainder = query.Substring(6).Trim();
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Open(remainder);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /youtube <query>
+            if (query.StartsWith("/youtube ", StringComparison.OrdinalIgnoreCase))
+            {
+                var q = query.Substring(9).Trim();
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Youtube(q);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /utube <query> (auto-play first result)
+            if (query.StartsWith("/utube ", StringComparison.OrdinalIgnoreCase))
+            {
+                var q = query.Substring(7).Trim();
+                var action = new LineBuddy.Services.ActionService();
+                var result = await action.UtubeAsync(q);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /ytmusic <query>
+            if (query.StartsWith("/ytmusic ", StringComparison.OrdinalIgnoreCase))
+            {
+                var q = query.Substring(9).Trim();
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.YtMusic(q);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /spotify <query>
+            if (query.StartsWith("/spotify ", StringComparison.OrdinalIgnoreCase))
+            {
+                var q = query.Substring(9).Trim();
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Spotify(q);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /local <query>
+            if (query.StartsWith("/local ", StringComparison.OrdinalIgnoreCase))
+            {
+                var q = query.Substring(7).Trim();
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Play("local", q);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /search <engine> <query>
+            if (query.StartsWith("/search ", StringComparison.OrdinalIgnoreCase))
+            {
+                var remainder = query.Substring(8).Trim();
+                var parts = remainder.Split(' ', 2, StringSplitOptions.RemoveEmptyEntries);
+                var engine = parts.Length > 0 ? parts[0] : "google";
+                var q = parts.Length > 1 ? parts[1] : string.Empty;
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Search(engine, q);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /lock
+            if (string.Equals(query, "/lock", StringComparison.OrdinalIgnoreCase))
+            {
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Lock();
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /sleep
+            if (string.Equals(query, "/sleep", StringComparison.OrdinalIgnoreCase))
+            {
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Sleep();
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /volume <subcommand>
+            if (query.StartsWith("/volume ", StringComparison.OrdinalIgnoreCase))
+            {
+                var sub = query.Substring(8).Trim();
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Volume(sub);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /screenshot
+            if (string.Equals(query, "/screenshot", StringComparison.OrdinalIgnoreCase))
+            {
+                var action = new LineBuddy.Services.ActionService();
+                var result = await action.ScreenshotAsync();
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /notepad <text>
+            if (query.StartsWith("/notepad ", StringComparison.OrdinalIgnoreCase))
+            {
+                var text = query.Substring(9);
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Notepad(text);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /timer <duration>
+            if (query.StartsWith("/timer ", StringComparison.OrdinalIgnoreCase))
+            {
+                var token = query.Substring(7).Trim();
+                var duration = ParseDuration(token);
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Timer(duration);
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /focus <minutes>
+            if (query.StartsWith("/focus ", StringComparison.OrdinalIgnoreCase))
+            {
+                var token = query.Substring(7).Trim();
+                var minutes = int.TryParse(token, out var m) ? m : 25;
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Focus(TimeSpan.FromMinutes(minutes));
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
+
+            // /break <minutes>
+            if (query.StartsWith("/break ", StringComparison.OrdinalIgnoreCase))
+            {
+                var token = query.Substring(7).Trim();
+                var minutes = int.TryParse(token, out var m) ? m : 5;
+                var action = new LineBuddy.Services.ActionService();
+                var result = action.Break(TimeSpan.FromMinutes(minutes));
+                await TypeTextWithAnimation(result, System.Windows.Media.Brushes.LightGray);
+                return;
+            }
             
             // Start thinking animation
             var thinkingTask = ShowThinkingAnimation();

@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace LineBuddy.Services
 {
@@ -33,8 +34,11 @@ namespace LineBuddy.Services
                     ? query 
                     : $"{conversationContext}{query}";
 
+                // Load personality (cached per process via static)
+                var personalityPrompt = PersonalityProvider.GetSystemPrompt();
+
                 // Build the request based on provider
-                var requestBody = BuildRequestBody(fullQuery, screenshotBase64);
+                var requestBody = BuildRequestBody(fullQuery, screenshotBase64, personalityPrompt);
                 var apiUrl = BuildApiUrl();
 
                 var json = JsonConvert.SerializeObject(requestBody);
@@ -59,32 +63,32 @@ namespace LineBuddy.Services
             }
         }
 
-        private object BuildRequestBody(string fullQuery, string screenshotBase64)
+        private object BuildRequestBody(string fullQuery, string screenshotBase64, string systemPrompt)
         {
             switch (_settings.LLMProvider.ToLower())
             {
                 case "google gemini":
                 case "gemini":
-                    return BuildGeminiRequest(fullQuery, screenshotBase64);
+                    return BuildGeminiRequest(fullQuery, screenshotBase64, systemPrompt);
                 
                 case "openai":
                 case "chatgpt":
-                    return BuildOpenAIRequest(fullQuery, screenshotBase64);
+                    return BuildOpenAIRequest(fullQuery, screenshotBase64, systemPrompt);
                 
                 case "anthropic":
                 case "claude":
-                    return BuildAnthropicRequest(fullQuery, screenshotBase64);
+                    return BuildAnthropicRequest(fullQuery, screenshotBase64, systemPrompt);
                 
                 case "ollama":
-                    return BuildOllamaRequest(fullQuery, screenshotBase64);
+                    return BuildOllamaRequest(fullQuery, screenshotBase64, systemPrompt);
                 
                 default:
                     // Generic format that works with most APIs
-                    return BuildGenericRequest(fullQuery, screenshotBase64);
+                    return BuildGenericRequest(fullQuery, screenshotBase64, systemPrompt);
             }
         }
 
-        private object BuildGeminiRequest(string fullQuery, string screenshotBase64)
+        private object BuildGeminiRequest(string fullQuery, string screenshotBase64, string systemPrompt)
         {
             // Build parts array - include text and optionally image
             var parts = new List<object> { new { text = fullQuery } };
@@ -112,17 +116,17 @@ namespace LineBuddy.Services
                 {
                     parts = new[]
                     {
-                        new { text = "You are Smart Bar, a highly concise, instant AI assistant. Your response MUST be a single sentence with a maximum of 30 words. Do not use markdown, formatting, or line breaks. Answer the user's query directly and briefly." }
+                        new { text = systemPrompt }
                     }
                 }
             };
         }
 
-        private object BuildOpenAIRequest(string fullQuery, string screenshotBase64)
+        private object BuildOpenAIRequest(string fullQuery, string screenshotBase64, string systemPrompt)
         {
             var messages = new List<object>
             {
-                new { role = "system", content = "You are Smart Bar, a highly concise, instant AI assistant. Your response MUST be a single sentence with a maximum of 30 words. Do not use markdown, formatting, or line breaks. Answer the user's query directly and briefly." },
+                new { role = "system", content = systemPrompt },
                 new { role = "user", content = fullQuery }
             };
 
@@ -147,7 +151,7 @@ namespace LineBuddy.Services
             };
         }
 
-        private object BuildAnthropicRequest(string fullQuery, string screenshotBase64)
+        private object BuildAnthropicRequest(string fullQuery, string screenshotBase64, string systemPrompt)
         {
             var content = new List<object> { new { type = "text", text = fullQuery } };
             
@@ -169,7 +173,7 @@ namespace LineBuddy.Services
             {
                 model = _settings.LLMModel,
                 max_tokens = 1000,
-                system = "You are Smart Bar, a highly concise, instant AI assistant. Your response MUST be a single sentence with a maximum of 30 words. Do not use markdown, formatting, or line breaks. Answer the user's query directly and briefly.",
+                system = systemPrompt,
                 messages = new[]
                 {
                     new { role = "user", content = content }
@@ -177,12 +181,12 @@ namespace LineBuddy.Services
             };
         }
 
-        private object BuildOllamaRequest(string fullQuery, string screenshotBase64)
+        private object BuildOllamaRequest(string fullQuery, string screenshotBase64, string systemPrompt)
         {
             var requestBody = new
             {
                 model = _settings.LLMModel,
-                prompt = $"You are Smart Bar, a highly concise, instant AI assistant. Your response MUST be a single sentence with a maximum of 30 words. Do not use markdown, formatting, or line breaks. Answer the user's query directly and briefly.\n\nUser: {fullQuery}",
+                prompt = $"{systemPrompt}\n\nUser: {fullQuery}",
                 stream = false
             };
 
@@ -201,10 +205,10 @@ namespace LineBuddy.Services
             return requestBody;
         }
 
-        private object BuildGenericRequest(string fullQuery, string screenshotBase64)
+        private object BuildGenericRequest(string fullQuery, string screenshotBase64, string systemPrompt)
         {
             // Generic format that works with most OpenAI-compatible APIs
-            return BuildOpenAIRequest(fullQuery, screenshotBase64);
+            return BuildOpenAIRequest(fullQuery, screenshotBase64, systemPrompt);
         }
 
         private string BuildApiUrl()
@@ -313,6 +317,35 @@ namespace LineBuddy.Services
         public void Dispose()
         {
             _httpClient?.Dispose();
+        }
+    }
+
+    internal static class PersonalityProvider
+    {
+        private static string _cachedPrompt;
+
+        public static string GetSystemPrompt()
+        {
+            if (!string.IsNullOrEmpty(_cachedPrompt)) return _cachedPrompt;
+            try
+            {
+                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+                var path = Path.Combine(baseDir, "personality.json");
+                if (File.Exists(path))
+                {
+                    dynamic json = JsonConvert.DeserializeObject(File.ReadAllText(path));
+                    string prompt = json?.system_prompt;
+                    if (!string.IsNullOrWhiteSpace(prompt))
+                    {
+                        _cachedPrompt = prompt.ToString();
+                        return _cachedPrompt;
+                    }
+                }
+            }
+            catch { }
+            // Fallback
+            _cachedPrompt = "You are Chitti. Respond in one single line (no line breaks), max ~30 words, no markdown. Be helpful, concrete, friendly, slightly playful, and professional.";
+            return _cachedPrompt;
         }
     }
 }

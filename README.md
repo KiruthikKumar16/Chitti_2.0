@@ -55,6 +55,24 @@ dotnet run
 4. The response will appear in the same text box
 5. Press **Escape** or click the X button to clear
 
+### Actions
+
+Smart Bar Tags (unique; separate from Smart Tags):
+
+- Media
+  - `/youtube <query>` → open YouTube search
+  - `/utube <query>` → auto-play first YouTube result (no API key)
+  - `/ytmusic <query>` → search on YouTube Music
+  - `/spotify <query>` → open Spotify search (requires Spotify installed)
+  - `/local <query>` → fuzzy match in your Music folder and open file
+- Browsing
+  - `/open <url or text>` → open URL directly or search YouTube for text
+  - `/search <engine> <query>` → google|bing|duckduckgo
+- System
+  - `/lock` `/sleep` `/volume up|down|mute|unmute` `/screenshot` `/notepad <text>` `/timer <5m|30s|1h>`
+- Groups
+  - `/focus <minutes>` `/break <minutes>`
+
 ### System Information
 The right side displays:
 - Current time (updates every second)

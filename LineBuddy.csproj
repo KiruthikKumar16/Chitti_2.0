@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Resource Include="icon.ico" />
+    <None Include="personality.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

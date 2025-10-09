@@ -1,7 +1,7 @@
 <Window x:Class="LineBuddy.SettingsWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Smart Bar Settings" 
+        Title="Chitti Settings" 
         Height="600" 
         Width="500"
         WindowStartupLocation="CenterScreen"

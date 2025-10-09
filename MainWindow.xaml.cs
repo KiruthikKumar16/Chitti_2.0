@@ -124,7 +124,7 @@ namespace LineBuddy
                 }
                 catch
                 {
-                    await TypeTextWithAnimation("✨ LineBuddy ready - What can I help with?", System.Windows.Media.Brushes.LightGray);
+                    await TypeTextWithAnimation("✨ Chitti ready - What can I help with?", System.Windows.Media.Brushes.LightGray);
                 }
             }
         }

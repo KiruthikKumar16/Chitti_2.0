@@ -61,7 +61,7 @@ namespace LineBuddy
         
         private static readonly string SettingsPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "LineBuddy",
+            "Chitti",
             "settings.json"
         );
 

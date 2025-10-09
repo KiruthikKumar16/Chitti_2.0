@@ -47,7 +47,7 @@ namespace LineBuddy.Services
 
             if (_activeMessageTypes.Count == 0)
             {
-                return "✨ LineBuddy ready - Configure message types in settings!";
+                return "✨ Chitti ready - Configure message types in settings!";
             }
 
             var messageType = _activeMessageTypes[_currentMessageIndex];

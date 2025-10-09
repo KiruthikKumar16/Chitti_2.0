@@ -41,7 +41,7 @@ namespace LineBuddy
             // Create a hidden Win32 window for AppBar registration
             var hInstance = GetModuleHandle(null);
             _appBarWindow = CreateWindowEx(
-                0, "STATIC", "LineBuddyAppBar", WS_POPUP,
+                0, "STATIC", "ChittiAppBar", WS_POPUP,
                 0, 0, (int)SystemParameters.PrimaryScreenWidth, (int)window.Height,
                 IntPtr.Zero, IntPtr.Zero, hInstance, IntPtr.Zero);
 

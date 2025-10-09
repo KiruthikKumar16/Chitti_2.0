@@ -17,7 +17,7 @@ namespace LineBuddy.Services
     {
         private static readonly string HistoryPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "LineBuddy",
+            "Chitti",
             "conversation_history.json"
         );
 

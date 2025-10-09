@@ -51,9 +51,9 @@ namespace LineBuddy.Services
                     return await CaptureScreenshotAsync();
                 }
                 
-                // Get window title to check if it's Smart Bar
+                // Get window title to check if it's Chitti
                 string windowTitle = GetWindowTitle(foregroundWindow);
-                if (windowTitle.Contains("Smart Bar") || windowTitle.Contains("LineBuddy"))
+                if (windowTitle.Contains("Chitti"))
                 {
                     // If Smart Bar is the active window, capture full screen instead
                     return await CaptureScreenshotAsync();

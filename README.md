@@ -1,7 +1,7 @@
-# Line Buddy: Always-On-Top AI Assistant
+# Chitti: Always-On-Top AI Assistant
 
 ## Overview
-Line Buddy is a Windows WPF application that provides an always-visible horizontal overlay at the top of your screen. It combines system monitoring with instant AI-powered assistance using the Gemini API.
+Chitti is a Windows WPF application that provides an always-visible horizontal overlay at the top of your screen. It combines system monitoring with instant AI-powered assistance using the Gemini API.
 
 ## Features
 

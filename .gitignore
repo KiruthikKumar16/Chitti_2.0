@@ -1,0 +1,73 @@
+# ---- Build outputs ----
+bin/
+obj/
+[Bb]uild/
+[Bb]uilds/
+
+# ---- Visual Studio / VS Code ----
+.vs/
+**/[Dd]ebug/
+**/[Rr]elease/
+**/[Rr]elease*/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# ---- JetBrains Rider ----
+.idea/
+
+# ---- NuGet ----
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+
+# ---- Logs ----
+*.log
+
+# ---- Generated / Intermediate files ----
+*.cache
+*.pdb
+*.ilk
+*.obj
+*.tmp
+*.tmp_proj
+
+# WPF generated
+*.baml
+*.g.cs
+*.g.i.cs
+
+# ---- Test results ----
+[Tt]est[Rr]esult*/
+[Tt]est[Rr]esults*/
+*.trx
+*.coverage
+*.coveragexml
+
+# ---- Publish / Artifacts ----
+publish/
+
+# ---- ReSharper ----
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# ---- OS files ----
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# ---- Local tooling / caches ----
+.local/
+coverage/
+dist/
+out/
+
+# ---- Misc ----
+*.sln.iml
+*.dbmdl
+*.jfm
+

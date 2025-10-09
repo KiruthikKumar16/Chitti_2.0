@@ -63,6 +63,63 @@ namespace LineBuddy.Services
             }
         }
 
+        // Actions planner: returns a compact JSON string plan
+        public async Task<string> QueryActionsAsync(string naturalInstruction)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(_settings.LLMApiKey))
+                {
+                    return string.Empty;
+                }
+                var system = PersonalityProvider.GetSystemPrompt() +
+                    "\nYou can also plan actions. If the user intent is a command, return ONLY valid minified JSON with keys action,args,risk (safe|risky). If it's a question, return empty string.";
+                var request = BuildOpenAIRequestForActions(naturalInstruction, system);
+                var apiUrl = BuildApiUrl();
+
+                var json = JsonConvert.SerializeObject(request);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                AddAuthorizationHeader();
+                var response = await _httpClient.PostAsync(apiUrl, content);
+                var responseContent = await response.Content.ReadAsStringAsync();
+                if (!response.IsSuccessStatusCode) return string.Empty;
+                return ParseActionsResponse(responseContent);
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private object BuildOpenAIRequestForActions(string userText, string system)
+        {
+            // Works for OpenAI-compatible endpoints and Gemini via generic handler
+            return new
+            {
+                model = _settings.LLMModel,
+                messages = new object[]
+                {
+                    new { role = "system", content = system },
+                    new { role = "user", content = userText },
+                    new { role = "system", content = "Return ONLY compact JSON for commands, else empty string. Example: {\"action\":\"searchImages\",\"args\":{\"engine\":\"google\",\"query\":\"logo\",\"count\":5},\"risk\":\"safe\"}" }
+                }
+            };
+        }
+
+        private string ParseActionsResponse(string responseContent)
+        {
+            try
+            {
+                var jsonResponse = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                string content = jsonResponse?.choices?[0]?.message?.content;
+                if (string.IsNullOrWhiteSpace(content)) return string.Empty;
+                // Heuristic: ensure it looks like JSON plan
+                if (content.Contains("\"action\"")) return content.Trim();
+                return string.Empty;
+            }
+            catch { return string.Empty; }
+        }
+
         private object BuildRequestBody(string fullQuery, string screenshotBase64, string systemPrompt)
         {
             switch (_settings.LLMProvider.ToLower())

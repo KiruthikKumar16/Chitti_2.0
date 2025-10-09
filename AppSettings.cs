@@ -61,6 +61,9 @@ namespace LineBuddy
         public List<string> CryptoWatchlist { get; set; } = new() { "bitcoin", "ethereum", "dogecoin" };
         public string WeatherLocation { get; set; } = "London";
         
+        // Automation & Safety
+        public bool AllowRiskyActionsWithConfirmation { get; set; } = true;
+        
         private static readonly string SettingsPath = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "Chitti",

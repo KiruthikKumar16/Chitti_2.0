@@ -276,6 +276,18 @@ namespace LineBuddy
                 return;
 
             var query = QueryTextBox.Text.Trim();
+            var lowered = query.ToLowerInvariant();
+            var forceAction = false;
+            if (lowered.StartsWith("chitti "))
+            {
+                query = query.Substring(7).Trim();
+                forceAction = true;
+            }
+            else if (lowered.StartsWith("chiti "))
+            {
+                query = query.Substring(6).Trim();
+                forceAction = true;
+            }
 
             // Command routing for /play and /open (no network keys)
             if (query.StartsWith("/open ", StringComparison.OrdinalIgnoreCase))
@@ -430,7 +442,34 @@ namespace LineBuddy
                 return;
             }
             
-            // Start thinking animation
+            // Try dynamic orchestrator for non-slash input
+            if (forceAction || !query.StartsWith("/"))
+            {
+                var orchestrator = new LineBuddy.Services.CommandOrchestrator(_llmService, new LineBuddy.Services.ActionService(), _settings);
+                var handled = await orchestrator.HandleAsync(query);
+                if (handled.handled)
+                {
+                    if (handled.needsConfirm && handled.confirmAction != null)
+                    {
+                        await TypeTextWithAnimation($"{handled.message} — press Enter to run", System.Windows.Media.Brushes.Orange);
+                        _typingCancellation?.Cancel();
+                        // On next Enter, run confirm
+                        this.KeyDown += async (s, e2) =>
+                        {
+                            if (e2.Key == System.Windows.Input.Key.Enter)
+                            {
+                                var resultMsg = await handled.confirmAction();
+                                await TypeTextWithAnimation(resultMsg, System.Windows.Media.Brushes.LightGray);
+                            }
+                        };
+                        return;
+                    }
+                    await TypeTextWithAnimation(handled.message, System.Windows.Media.Brushes.LightGray);
+                    return;
+                }
+            }
+
+            // Start thinking animation for Q&A
             var thinkingTask = ShowThinkingAnimation();
             QueryTextBox.IsEnabled = false;
 

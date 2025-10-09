@@ -388,35 +388,25 @@
                 </ScrollViewer>
             </TabItem>
             
-            <!-- Smart Bar Tags Tab -->
-            <TabItem Header="Smart Bar Tags">
+            <!-- Automation & Safety Tab -->
+            <TabItem Header="Automation &amp; Safety">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#FF2D2D30">
                     <StackPanel Margin="20">
-                        <TextBlock Text="Smart Bar-only commands (distinct from Smart Tags)." Foreground="White" Margin="0,0,0,10"/>
-                        <TextBlock Text="Media" Foreground="#FF007ACC" FontWeight="Bold" Margin="0,10,0,5"/>
-                        <TextBlock Text="/youtube &lt;query&gt; — open YouTube search" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/utube &lt;query&gt; — auto-play first YouTube result" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/ytmusic &lt;query&gt; — open YouTube Music search" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/spotify &lt;query&gt; — open Spotify search" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/local &lt;query&gt; — play best match from Music folder" Foreground="White" Margin="0,2"/>
-
-                        <TextBlock Text="Browsing" Foreground="#FF007ACC" FontWeight="Bold" Margin="0,10,0,5"/>
-                        <TextBlock Text="/open &lt;url|text&gt; — open URL or search YouTube for text" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/search &lt;engine&gt; &lt;query&gt; — search with google|bing|duckduckgo" Foreground="White" Margin="0,2"/>
-
-                        <TextBlock Text="System" Foreground="#FF007ACC" FontWeight="Bold" Margin="0,10,0,5"/>
-                        <TextBlock Text="/lock — lock workstation" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/sleep — sleep computer" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/volume &lt;up|down|mute|unmute&gt; — adjust system volume" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/screenshot — capture screen and open file location" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/notepad &lt;text&gt; — open a temp note" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/timer &lt;5m|30s|1h&gt; — set a timer" Foreground="White" Margin="0,2"/>
-
-                        <TextBlock Text="Groups" Foreground="#FF007ACC" FontWeight="Bold" Margin="0,10,0,5"/>
-                        <TextBlock Text="/focus &lt;minutes&gt; — lower volume and start focus timer" Foreground="White" Margin="0,2"/>
-                        <TextBlock Text="/break &lt;minutes&gt; — start break timer and open stretch guide" Foreground="White" Margin="0,2"/>
-
-                        <TextBlock Text="Note: Smart Bar Tags are unique and separate from Smart Tags. Avoid name collisions." Foreground="LightGray" Margin="0,10,0,0"/>
+                        <TextBlock Text="Configure dynamic action execution and confirmation policy." Foreground="White" Margin="0,0,0,10"/>
+                        <CheckBox Content="Allow risky actions with confirmation (lock, sleep)" IsChecked="True" Foreground="White"/>
+                        <TextBlock Text="Chitti can perform these actions:" Foreground="White" Margin="10,10,0,5"/>
+                        <StackPanel Margin="20,0,0,0">
+                            <TextBlock Text="• Play media: YouTube auto-play, YouTube Music, Spotify, local files" Foreground="LightGray"/>
+                            <TextBlock Text="• Search: web, images (Google/Bing/DDG)" Foreground="LightGray"/>
+                            <TextBlock Text="• Open: URLs, sites, queries" Foreground="LightGray"/>
+                            <TextBlock Text="• Notes: open notepad with provided text" Foreground="LightGray"/>
+                            <TextBlock Text="• Timers: set timers (e.g., 5m, 30s, 1h)" Foreground="LightGray"/>
+                            <TextBlock Text="• Screenshots: capture and open file location" Foreground="LightGray"/>
+                            <TextBlock Text="• Volume: up, down, mute, unmute" Foreground="LightGray"/>
+                            <TextBlock Text="• Focus/Break: quick session helpers" Foreground="LightGray"/>
+                            <TextBlock Text="• Risky (confirm): lock, sleep" Foreground="LightGray"/>
+                            <TextBlock Text="• Blocked: delete files, arbitrary shell, shutdown" Foreground="LightGray"/>
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>

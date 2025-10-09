@@ -139,22 +139,29 @@ namespace LineBuddy
             
             try
             {
+                // Sanitize to one line to prevent vertical misalignment
+                var singleLine = (text ?? string.Empty)
+                    .Replace("\r\n", " ")
+                    .Replace("\n", " ")
+                    .Replace("\r", " ")
+                    .Trim();
+
                 QueryTextBox.Foreground = foreground;
                 
                 // If typing animation is disabled (speed = 0), show text immediately
                 if (_settings.TypingAnimationSpeed == 0)
                 {
-                    QueryTextBox.Text = text;
+                    QueryTextBox.Text = singleLine;
                     return;
                 }
                 
                 QueryTextBox.Text = "";
                 
-                for (int i = 0; i <= text.Length; i++)
+                for (int i = 0; i <= singleLine.Length; i++)
                 {
                     if (_typingCancellation.Token.IsCancellationRequested) break;
                     
-                    QueryTextBox.Text = text.Substring(0, i);
+                    QueryTextBox.Text = singleLine.Substring(0, i);
                     await Task.Delay(_settings.TypingAnimationSpeed, _typingCancellation.Token);
                 }
             }

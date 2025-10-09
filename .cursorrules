@@ -1,0 +1,10 @@
+Build Rules for Chitti
+
+- After each code/config change, build and confirm zero errors.
+- If errors occur, fix and rebuild until clean.
+- Make small, atomic edits with quick build checks.
+- Preserve existing indentation and namespaces.
+- Validate WPF XAML bindings/named elements after edits.
+- Keep dependencies minimal and pinned; avoid unnecessary additions.
+- Treat new warnings as actionable; avoid regressing quality.
+- Ensure resources (icons, assets) are valid and buildable.

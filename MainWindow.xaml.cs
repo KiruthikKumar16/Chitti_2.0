@@ -84,7 +84,10 @@ namespace LineBuddy
         {
             // Set window size and position at the very top
             Width = SystemParameters.PrimaryScreenWidth;
-            Height = 40; // Back to original height
+            var dynamicHeight = Math.Round(SystemParameters.PrimaryScreenHeight * 0.08);
+            if (dynamicHeight < 32) dynamicHeight = 32;
+            if (dynamicHeight > 120) dynamicHeight = 120;
+            Height = dynamicHeight;
             Left = 0;
             Top = 0;
             

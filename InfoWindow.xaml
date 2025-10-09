@@ -1,0 +1,342 @@
+<Window x:Class="LineBuddy.InfoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Chitti Info" 
+        Height="600" 
+        Width="500"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="#FF1A1A1A"
+        Foreground="White"
+        Icon="chitti.ico">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <!-- Tabbed Content -->
+        <TabControl Grid.Row="0" Background="#FF1A1A1A" BorderThickness="0" Margin="8">
+            <TabControl.Resources>
+                <Style TargetType="TabItem">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Border Name="Border" 
+                                        Background="#FF2D2D2D" 
+                                        BorderThickness="0" 
+                                        CornerRadius="6,6,0,0" 
+                                        Margin="0,0,4,0"
+                                        Padding="16,10">
+                                    <ContentPresenter x:Name="ContentSite" 
+                                                      VerticalAlignment="Center" 
+                                                      HorizontalAlignment="Center" 
+                                                      ContentSource="Header"/>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="#FF4A90E2"/>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Border" Property="Background" Value="#FF3D3D3D"/>
+                                    </Trigger>
+                                    <!-- Override mouse over when selected -->
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="IsSelected" Value="True"/>
+                                            <Condition Property="IsMouseOver" Value="True"/>
+                                        </MultiTrigger.Conditions>
+                                        <Setter TargetName="Border" Property="Background" Value="#FF0099DD"/>
+                                    </MultiTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+            
+            <!-- About Tab -->
+            <TabItem Header="About">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#FF2D2D30">
+                    <StackPanel Margin="20">
+                        
+                        <!-- App Branding -->
+                        <GroupBox Header="Application Information" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+                                    <Image Source="chitti.png" Width="48" Height="48" Margin="0,0,15,0"/>
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock Text="Chitti" FontSize="24" FontWeight="Bold" Foreground="White"/>
+                                        <TextBlock Text="v0.1.0-beta" FontSize="12" Foreground="#FFB0B0B0"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <TextBlock Text="Always-On-Top AI Assistant with Smart Automation" 
+                                           FontSize="14" Foreground="#FFB0B0B0" 
+                                           TextWrapping="Wrap" TextAlignment="Center" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- Developer Information -->
+                        <GroupBox Header="Developer Information" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Pon Dinesh kumar M" FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,0,0,5"/>
+                                <TextBlock Text="Creator &amp; Developer" FontSize="14" 
+                                           Foreground="#FFB0B0B0" Margin="0,0,0,10"/>
+                                
+                                <!-- Social Links -->
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                    <Button Content="LinkedIn" Click="SocialLink_Click" 
+                                            Tag="https://www.linkedin.com/in/m-pon-dinesh-kumar/" 
+                                            Background="#FF2D2D2D" Foreground="White" BorderThickness="0" 
+                                            Padding="12,6" Margin="5" FontSize="12"/>
+                                    <Button Content="GitHub" Click="SocialLink_Click" 
+                                            Tag="https://github.com/Pon-Dinesh-kumar" 
+                                            Background="#FF2D2D2D" Foreground="White" BorderThickness="0" 
+                                            Padding="12,6" Margin="5" FontSize="12"/>
+                                    <Button Content="X/Twitter" Click="SocialLink_Click" 
+                                            Tag="http://x.com/pondineshkumar" 
+                                            Background="#FF2D2D2D" Foreground="White" BorderThickness="0" 
+                                            Padding="12,6" Margin="5" FontSize="12"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- Project Information -->
+                        <GroupBox Header="Project Information" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Open Source Project" FontSize="16" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,0,0,5"/>
+                                <TextBlock Text="Educational and Personal Use License" FontSize="14" 
+                                           Foreground="#FFB0B0B0" Margin="0,0,0,10"/>
+                                <Button Content="View on GitHub" Click="SocialLink_Click" 
+                                        Tag="https://github.com/Pon-Dinesh-kumar/Chitti_2.0" 
+                                        Background="#FF4A90E2" Foreground="White" BorderThickness="0" 
+                                        Padding="12,6" HorizontalAlignment="Left" FontSize="12"/>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            
+            <!-- How to Use Tab -->
+            <TabItem Header="How to Use">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#FF2D2D30">
+                    <StackPanel Margin="20">
+                        
+                        <!-- Getting Started -->
+                        <GroupBox Header="Getting Started" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="1. Configure at least one LLM API key in Settings → LLM Settings"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="2. Type your questions in the left text box and press Enter"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="3. Use natural language commands for automation (e.g., 'play despacito')"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="4. Right-click the settings button for more options"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- AI Assistant -->
+                        <GroupBox Header="AI Assistant" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Ask any question by typing in the left text box"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Responses are limited to one line for quick reading"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Switch between multiple LLM providers (Gemini, OpenAI, Claude, Ollama)"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• Press Escape to clear the current query"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- Smart Automation -->
+                        <GroupBox Header="Smart Automation" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Media &amp; Entertainment:" FontSize="14" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,0,0,8"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• 'play despacito' → Auto-plays first YouTube result"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• 'play lo-fi beats on spotify' → Opens Spotify search"/>
+                                </TextBlock>
+                                <TextBlock Text="System Utilities:" FontSize="14" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,8,0,8"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• 'take screenshot' → Captures and opens screenshot"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• 'open notepad' → Launches Notepad"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• 'set timer for 10 minutes' → Sets system timer"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• 'volume up' / 'mute volume' → Volume control"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- System Monitoring -->
+                        <GroupBox Header="System Monitoring" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Real-time clock display (updates every second)"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Battery status with charging indicator (laptops)"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Network connectivity status (WiFi/Ethernet)"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• Dynamic messages: weather, crypto, news, quotes, system stats"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- Keyboard Shortcuts -->
+                        <GroupBox Header="Keyboard Shortcuts" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Enter: Submit your query"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Escape: Clear/cancel current query"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• Right-click settings button: Access context menu"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            
+            <!-- Contribute Tab -->
+            <TabItem Header="Contribute">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Background="#FF2D2D30">
+                    <StackPanel Margin="20">
+                        
+                        <!-- Why Contribute -->
+                        <GroupBox Header="Why Contribute?" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Help build an open-source AI assistant for everyone"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Contribute to the future of smart automation"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• Learn and grow with the community"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- How to Contribute -->
+                        <GroupBox Header="How to Contribute" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="1. Fork the repository on GitHub"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="2. Clone your fork locally and create a feature branch"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="3. Make your changes and test thoroughly"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="4. Submit a pull request with a clear description"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="5. Follow the code style guidelines in CONTRIBUTING.md"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- Contribution Guidelines -->
+                        <GroupBox Header="Contribution Guidelines" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Report bugs using GitHub Issues with detailed steps"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Suggest new features via GitHub Discussions"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• Improve documentation and help others learn"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• Be respectful and follow our code of conduct"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- Resources -->
+                        <GroupBox Header="Resources" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <Button Content="GitHub Repository" Click="SocialLink_Click" 
+                                        Tag="https://github.com/Pon-Dinesh-kumar/Chitti_2.0" 
+                                        Background="#FF4A90E2" Foreground="White" BorderThickness="0" 
+                                        Padding="12,6" HorizontalAlignment="Left" Margin="0,0,0,8" FontSize="12"/>
+                                <Button Content="CONTRIBUTING.md" Click="SocialLink_Click" 
+                                        Tag="https://github.com/Pon-Dinesh-kumar/Chitti_2.0/blob/main/CONTRIBUTING.md" 
+                                        Background="#FF2D2D2D" Foreground="White" BorderThickness="0" 
+                                        Padding="12,6" HorizontalAlignment="Left" Margin="0,0,0,8" FontSize="12"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• Check out the README for detailed setup instructions"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                        <!-- Support the Project -->
+                        <GroupBox Header="Support the Project" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• ⭐ Star the repository on GitHub"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• 🔗 Share Chitti with others"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• 🐛 Report bugs and issues"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• 💡 Suggest new features and improvements"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+            
+        </TabControl>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16">
+            <Button x:Name="CloseButton" 
+                    Content="Close" 
+                    Background="#FF4A90E2" 
+                    Foreground="White" 
+                    BorderThickness="0" 
+                    Padding="16,8"
+                    Click="CloseButton_Click"/>
+        </StackPanel>
+        
+    </Grid>
+</Window>

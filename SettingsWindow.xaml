@@ -6,8 +6,9 @@
         Width="500"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Background="#FF2D2D30"
-        Foreground="White">
+        Background="#FF1A1A1A"
+        Foreground="White"
+        Icon="chitti.ico">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -16,31 +17,29 @@
         </Grid.RowDefinitions>
         
         <!-- Tabbed Content -->
-        <TabControl Grid.Row="0" Background="#FF2D2D30" BorderThickness="0" Margin="10">
+        <TabControl Grid.Row="0" Background="#FF1A1A1A" BorderThickness="0" Margin="8">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="TabItem">
                                 <Border Name="Border" 
-                                        Background="#FF3F3F46" 
-                                        BorderBrush="#FF686868" 
-                                        BorderThickness="1,1,1,0" 
-                                        CornerRadius="5,5,0,0" 
-                                        Margin="0,0,2,0">
+                                        Background="#FF2D2D2D" 
+                                        BorderThickness="0" 
+                                        CornerRadius="6,6,0,0" 
+                                        Margin="0,0,4,0"
+                                        Padding="16,10">
                                     <ContentPresenter x:Name="ContentSite" 
                                                       VerticalAlignment="Center" 
                                                       HorizontalAlignment="Center" 
-                                                      ContentSource="Header" 
-                                                      Margin="10,5"/>
+                                                      ContentSource="Header"/>
                                 </Border>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="Border" Property="Background" Value="#FF007ACC"/>
-                                        <Setter TargetName="Border" Property="BorderBrush" Value="#FF007ACC"/>
+                                        <Setter TargetName="Border" Property="Background" Value="#FF4A90E2"/>
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="Border" Property="Background" Value="#FF4A4A50"/>
+                                        <Setter TargetName="Border" Property="Background" Value="#FF3D3D3D"/>
                                     </Trigger>
                                     <!-- Override mouse over when selected -->
                                     <MultiTrigger>
@@ -351,10 +350,10 @@
                                     <Button x:Name="AddCustomTagButton" 
                                             Grid.Row="1" Grid.Column="2"
                                             Content="Add Tag" 
-                                            Background="#FF007ACC" 
+                                            Background="#FF4A90E2" 
                                             Foreground="White" 
                                             BorderThickness="0"
-                                            Padding="5"
+                                            Padding="12,6"
                                             Margin="5,5,0,0"
                                             VerticalAlignment="Top"
                                             Click="AddCustomTagButton_Click"/>
@@ -374,7 +373,7 @@
                                             <GridViewColumn Header="Action" Width="60">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <Button Content="Remove" Background="#FF555555" Foreground="White" BorderThickness="0" Padding="5,2" FontSize="10"/>
+                                                        <Button Content="Remove" Background="#FF2D2D2D" Foreground="White" BorderThickness="0" Padding="8,4" FontSize="10"/>
                                                     </DataTemplate>
                                                 </GridViewColumn.CellTemplate>
                                             </GridViewColumn>
@@ -539,22 +538,22 @@
         </TabControl>
 
         <!-- Buttons -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="20">
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16">
             <Button x:Name="SaveButton" 
                     Content="Save" 
-                    Background="#FF007ACC" 
+                    Background="#FF4A90E2" 
                     Foreground="White" 
-                    BorderThickness="0"
-                    Padding="20,8"
-                    Margin="0,0,10,0"
+                    BorderThickness="0" 
+                    Padding="16,8"
+                    Margin="0,0,8,0"
                     Click="SaveButton_Click"/>
             
             <Button x:Name="CancelButton" 
                     Content="Cancel" 
-                    Background="#FF555555" 
+                    Background="#FF2D2D2D" 
                     Foreground="White" 
-                    BorderThickness="0"
-                    Padding="20,8"
+                    BorderThickness="0" 
+                    Padding="16,8"
                     Click="CancelButton_Click"/>
         </StackPanel>
         

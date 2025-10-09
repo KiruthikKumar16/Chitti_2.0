@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" 
+           Name="Chitti - AI Assistant" 
+           Language="1033" 
+           Version="0.1.0" 
+           Manufacturer="Pon Dinesh kumar M" 
+           UpgradeCode="PUT-GUID-HERE">
+    
+    <Package InstallerVersion="200" 
+             Compressed="yes" 
+             InstallScope="perMachine"
+             Description="Chitti - Always-On-Top AI Assistant with Smart Automation"
+             Comments="Chitti is an intelligent AI assistant that provides smart automation and real-time assistance."
+             Manufacturer="Pon Dinesh kumar M"
+             Keywords="AI,Assistant,Automation,Productivity,Windows"
+             Platform="x64" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+    <MediaTemplate EmbedCab="yes" />
+
+    <!-- App Icon -->
+    <Icon Id="icon.ico" SourceFile="chitti.ico" />
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+
+    <!-- Installation Directory -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="ProgramFiles64Folder">
+        <Directory Id="INSTALLFOLDER" Name="Chitti">
+          <!-- Main Application Files -->
+          <Component Id="MainExecutable" Guid="*">
+            <File Id="ChittiExe" 
+                  Name="Chitti.exe" 
+                  Source="bin\Debug\net8.0-windows\Chitti.exe" 
+                  KeyPath="yes" />
+            <File Id="ChittiDll" 
+                  Name="Chitti.dll" 
+                  Source="bin\Debug\net8.0-windows\Chitti.dll" />
+            <File Id="ChittiPdb" 
+                  Name="Chitti.pdb" 
+                  Source="bin\Debug\net8.0-windows\Chitti.pdb" />
+            <File Id="NewtonsoftJsonDll" 
+                  Name="Newtonsoft.Json.dll" 
+                  Source="bin\Debug\net8.0-windows\Newtonsoft.Json.dll" />
+            <File Id="SystemManagementDll" 
+                  Name="System.Management.dll" 
+                  Source="bin\Debug\net8.0-windows\System.Management.dll" />
+            <File Id="ChittiIco" 
+                  Name="chitti.ico" 
+                  Source="chitti.ico" />
+            <File Id="ChittiPng" 
+                  Name="chitti.png" 
+                  Source="chitti.png" />
+            <File Id="PersonalityJson" 
+                  Name="personality.json" 
+                  Source="personality.json" />
+          </Component>
+
+          <!-- Runtime Files -->
+          <Directory Id="RuntimesFolder" Name="runtimes">
+            <Directory Id="WinFolder" Name="win">
+              <Directory Id="LibFolder" Name="lib">
+                <Directory Id="Net80Folder" Name="net8.0">
+                  <Component Id="RuntimeFiles" Guid="*">
+                    <File Id="SystemManagementRuntimeDll" 
+                          Name="System.Management.dll" 
+                          Source="bin\Debug\net8.0-windows\runtimes\win\lib\net8.0\System.Management.dll" 
+                          KeyPath="yes" />
+                  </Component>
+                </Directory>
+              </Directory>
+            </Directory>
+          </Directory>
+        </Directory>
+      </Directory>
+
+      <!-- Start Menu -->
+      <Directory Id="ProgramMenuFolder">
+        <Directory Id="ProgramMenuDir" Name="Chitti">
+          <Component Id="ProgramMenuDir" Guid="*">
+            <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+            <RegistryValue Root="HKCU" Key="Software\Chitti" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+          </Component>
+        </Directory>
+      </Directory>
+
+      <!-- Desktop -->
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+
+    <!-- Features -->
+    <Feature Id="ProductFeature" Title="Chitti" Level="1">
+      <ComponentRef Id="MainExecutable" />
+      <ComponentRef Id="RuntimeFiles" />
+      <ComponentRef Id="ProgramMenuDir" />
+    </Feature>
+
+    <!-- Shortcuts -->
+    <DirectoryRef Id="ProgramMenuDir">
+      <Component Id="ProgramMenuShortcut" Guid="*">
+        <Shortcut Id="ProgramMenuShortcut" 
+                  Directory="ProgramMenuDir" 
+                  Name="Chitti" 
+                  WorkingDirectory="INSTALLFOLDER" 
+                  Icon="icon.ico" 
+                  IconIndex="0" 
+                  Advertise="yes" />
+        <RemoveFolder Id="ProgramMenuDir" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Chitti" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <DirectoryRef Id="DesktopFolder">
+      <Component Id="DesktopShortcut" Guid="*">
+        <Shortcut Id="DesktopShortcut" 
+                  Directory="DesktopFolder" 
+                  Name="Chitti" 
+                  WorkingDirectory="INSTALLFOLDER" 
+                  Icon="icon.ico" 
+                  IconIndex="0" 
+                  Advertise="yes" />
+        <RemoveFolder Id="DesktopFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\Chitti" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- Registry Entries -->
+    <Component Id="RegistryEntries" Guid="*" Directory="TARGETDIR">
+      <RegistryKey Root="HKLM" Key="SOFTWARE\Chitti">
+        <RegistryValue Name="InstallPath" Type="string" Value="[INSTALLFOLDER]" />
+        <RegistryValue Name="Version" Type="string" Value="0.1.0" />
+        <RegistryValue Name="Manufacturer" Type="string" Value="Pon Dinesh kumar M" />
+      </RegistryKey>
+      <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Chitti">
+        <RegistryValue Name="DisplayName" Type="string" Value="Chitti - AI Assistant" />
+        <RegistryValue Name="DisplayVersion" Type="string" Value="0.1.0" />
+        <RegistryValue Name="Publisher" Type="string" Value="Pon Dinesh kumar M" />
+        <RegistryValue Name="InstallLocation" Type="string" Value="[INSTALLFOLDER]" />
+        <RegistryValue Name="NoModify" Type="integer" Value="1" />
+        <RegistryValue Name="NoRepair" Type="integer" Value="1" />
+        <RegistryValue Name="UninstallString" Type="string" Value="[SystemFolder]msiexec.exe /x [ProductCode]" />
+        <RegistryValue Name="URLInfoAbout" Type="string" Value="https://github.com/Pon-Dinesh-kumar/Chitti_2.0" />
+        <RegistryValue Name="HelpLink" Type="string" Value="https://github.com/Pon-Dinesh-kumar/Chitti_2.0" />
+        <RegistryValue Name="URLUpdateInfo" Type="string" Value="https://github.com/Pon-Dinesh-kumar/Chitti_2.0/releases" />
+      </RegistryKey>
+    </Component>
+
+    <!-- UI Configuration -->
+    <UIRef Id="WixUI_Minimal" />
+    <WixVariable Id="WixUILicenseRtf" Value="license.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="dialog.bmp" />
+
+    <!-- Launch Conditions -->
+    <Condition Message="This application requires Windows 10 or later.">
+      <![CDATA[Installed OR (VersionNT >= 603)]]>
+    </Condition>
+
+    <!-- .NET Framework Check -->
+    <PropertyRef Id="WIX_IS_NETFRAMEWORK_48_OR_LATER_INSTALLED" />
+    <Condition Message="This application requires .NET 8.0 or later. Please install it from https://dotnet.microsoft.com/download">
+      <![CDATA[Installed OR WIX_IS_NETFRAMEWORK_48_OR_LATER_INSTALLED]]>
+    </Condition>
+
+  </Product>
+</Wix>

@@ -7,7 +7,8 @@
         Background="#AA000000"
         ResizeMode="NoResize" 
         Topmost="True"
-        ShowInTaskbar="False">
+        ShowInTaskbar="False"
+        Icon="chitti.ico">
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -19,13 +20,54 @@
         </Grid.ColumnDefinitions>
         
         <!-- Logo before textbox -->
-        <Image Grid.Column="0"
-               Source="icon.ico"
-               Width="20"
-               Height="20"
-               Stretch="Uniform"
-               VerticalAlignment="Center"
-               Margin="10,0,5,0"/>
+        <Button Grid.Column="0"
+                Click="Logo_Click"
+                Background="Transparent"
+                BorderThickness="0"
+                Padding="0"
+                Margin="10,0,5,0"
+                Cursor="Hand"
+                ToolTip="Click to open Chitti Info">
+            
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Border x:Name="BorderElement"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="4"
+                            Effect="{TemplateBinding Effect}">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="BorderElement" Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="8" Color="White" Opacity="0.2"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Button.Template>
+            
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect ShadowDepth="0" BlurRadius="3" Color="Black" Opacity="0.1"/>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Button.Style>
+            
+            <Image Source="chitti.png"
+                   Width="20"
+                   Height="20"
+                   Stretch="Uniform"/>
+        </Button>
         
         <!-- Smart Tags Bubble -->
         <Button x:Name="SmartTagsBubble"
@@ -212,7 +254,43 @@
                         Width="20"
                         Height="20"
                         Margin="5,0,10,0"
-                        Click="ClearButton_Click"/>
+                        Cursor="Hand"
+                        Click="ClearButton_Click">
+                    
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="BorderElement"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    CornerRadius="4"
+                                    Effect="{TemplateBinding Effect}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="BorderElement" Property="Effect">
+                                        <Setter.Value>
+                                            <DropShadowEffect ShadowDepth="0" BlurRadius="8" Color="White" Opacity="0.2"/>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                    
+                    <Button.Style>
+                        <Style TargetType="Button">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="3" Color="Black" Opacity="0.1"/>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </Button.Style>
+                </Button>
             </Grid>
         </Border>
         
@@ -296,6 +374,10 @@
                 <Button.ContextMenu>
                     <ContextMenu x:Name="SettingsContextMenu">
                         <MenuItem Header="Settings" Click="Settings_Click"/>
+                        <Separator/>
+                        <MenuItem Header="ℹ️ About" Click="About_Click"/>
+                        <MenuItem Header="❓ How to Use" Click="HowToUse_Click"/>
+                        <MenuItem Header="🤝 Contribute" Click="Contribute_Click"/>
                         <Separator/>
                         <MenuItem Header="Minimize" Click="Minimize_Click"/>
                         <MenuItem Header="Restart" Click="Restart_Click"/>

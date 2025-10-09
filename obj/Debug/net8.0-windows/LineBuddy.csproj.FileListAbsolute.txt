@@ -26,3 +26,5 @@ C:\Users\New\Desktop\Chitti_2.0\obj\Debug\net8.0-windows\refint\Chitti.dll
 C:\Users\New\Desktop\Chitti_2.0\obj\Debug\net8.0-windows\Chitti.pdb
 C:\Users\New\Desktop\Chitti_2.0\obj\Debug\net8.0-windows\ref\Chitti.dll
 C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\personality.json
+C:\Users\New\Desktop\Chitti_2.0\obj\Debug\net8.0-windows\InfoWindow.baml
+C:\Users\New\Desktop\Chitti_2.0\obj\Debug\net8.0-windows\InfoWindow.g.cs

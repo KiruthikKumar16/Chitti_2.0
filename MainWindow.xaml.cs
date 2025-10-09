@@ -552,6 +552,26 @@ namespace LineBuddy
             settingsWindow.Owner = this;
             settingsWindow.ShowDialog();
         }
+        
+        private void About_Click(object sender, RoutedEventArgs e)
+        {
+            InfoWindow.ShowAbout();
+        }
+        
+        private void HowToUse_Click(object sender, RoutedEventArgs e)
+        {
+            InfoWindow.ShowHowToUse();
+        }
+        
+        private void Contribute_Click(object sender, RoutedEventArgs e)
+        {
+            InfoWindow.ShowContribute();
+        }
+        
+        private void Logo_Click(object sender, RoutedEventArgs e)
+        {
+            InfoWindow.ShowAbout();
+        }
 
         private void OnSettingsChanged(AppSettings newSettings)
         {

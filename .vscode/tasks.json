@@ -1,0 +1,24 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Build LineBuddy",
+			"type": "shell",
+			"command": "dotnet build LineBuddy.csproj",
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Run LineBuddy",
+			"type": "shell",
+			"command": "dotnet run --project LineBuddy.csproj",
+			"problemMatcher": [
+				"$msCompile"
+			],
+			"group": "test",
+			"dependsOn": "Build LineBuddy"
+		}
+	]
+}

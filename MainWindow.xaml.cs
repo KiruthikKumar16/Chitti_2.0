@@ -62,7 +62,7 @@ namespace LineBuddy
             // Setup timer for system monitoring
             _updateTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(1)
+                Interval = TimeSpan.FromSeconds(2) // Changed from 1 to 2 seconds
             };
             _updateTimer.Tick += UpdateSystemInfo;
             _updateTimer.Start();
@@ -78,6 +78,21 @@ namespace LineBuddy
             // Initial updates
             UpdateSystemInfo(null, null);
             UpdateDynamicMessage(null, null);
+            
+            // Add window state change handler for smart timer management
+            this.StateChanged += MainWindow_StateChanged;
+        }
+
+        private void MainWindow_StateChanged(object sender, EventArgs e)
+        {
+            if (WindowState == WindowState.Minimized)
+            {
+                _updateTimer.Interval = TimeSpan.FromSeconds(10); // Slow down when minimized
+            }
+            else
+            {
+                _updateTimer.Interval = TimeSpan.FromSeconds(2);
+            }
         }
 
         private void SetupWindow()
@@ -657,7 +672,7 @@ namespace LineBuddy
                     {
                         case SmartTagStatus.Listening:
                             statusTextBlock.Text = "LISTENING";
-                            SmartTagsBubble.ToolTip = "Click to toggle Smart Tags (Currently: ON)";
+                            SmartTagsBubble.ToolTip = PersonalityManager.Instance.FormatMessage("smart_tags_listening", null) ?? "Click to toggle Smart Tags (Currently: ON)";
                             SmartTagsBubble.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0x22, 0x00, 0x7A, 0xCC));
                             SmartTagsBubble.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x00, 0x7A, 0xCC));
                             SmartTagsBubble.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x00, 0x7A, 0xCC));
@@ -665,7 +680,7 @@ namespace LineBuddy
                             break;
                         case SmartTagStatus.Processing:
                             statusTextBlock.Text = "PROCESSING";
-                            SmartTagsBubble.ToolTip = "Smart Tags: Processing with AI...";
+                            SmartTagsBubble.ToolTip = PersonalityManager.Instance.FormatMessage("smart_tags_processing", null) ?? "Smart Tags: Processing with AI...";
                             SmartTagsBubble.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0x22, 0xFF, 0x8C, 0x00));
                             SmartTagsBubble.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0x8C, 0x00));
                             SmartTagsBubble.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0x8C, 0x00));
@@ -673,7 +688,7 @@ namespace LineBuddy
                             break;
                         case SmartTagStatus.Pasting:
                             statusTextBlock.Text = "PASTING";
-                            SmartTagsBubble.ToolTip = "Smart Tags: Typing result...";
+                            SmartTagsBubble.ToolTip = PersonalityManager.Instance.FormatMessage("smart_tags_pasting", null) ?? "Smart Tags: Typing result...";
                             SmartTagsBubble.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0x22, 0x00, 0x80, 0x00));
                             SmartTagsBubble.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x00, 0xFF, 0x00));
                             SmartTagsBubble.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x00, 0xFF, 0x00));
@@ -681,7 +696,7 @@ namespace LineBuddy
                             break;
                         case SmartTagStatus.Error:
                             statusTextBlock.Text = "ERROR";
-                            SmartTagsBubble.ToolTip = "Smart Tags: Error occurred - Click to retry";
+                            SmartTagsBubble.ToolTip = PersonalityManager.Instance.FormatMessage("smart_tags_error", null) ?? "Smart Tags: Error occurred - Click to retry";
                             SmartTagsBubble.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0x22, 0xFF, 0x00, 0x00));
                             SmartTagsBubble.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0x00, 0x00));
                             SmartTagsBubble.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0xFF, 0x00, 0x00));
@@ -689,7 +704,7 @@ namespace LineBuddy
                             break;
                         case SmartTagStatus.Disabled:
                             statusTextBlock.Text = "OFF";
-                            SmartTagsBubble.ToolTip = "Click to toggle Smart Tags (Currently: OFF)";
+                            SmartTagsBubble.ToolTip = PersonalityManager.Instance.FormatMessage("smart_tags_disabled", null) ?? "Click to toggle Smart Tags (Currently: OFF)";
                             SmartTagsBubble.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0x22, 0x66, 0x66, 0x66));
                             SmartTagsBubble.Foreground = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x99, 0x99, 0x99));
                             SmartTagsBubble.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromArgb(0xFF, 0x66, 0x66, 0x66));

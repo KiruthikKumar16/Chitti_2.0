@@ -8,6 +8,7 @@ namespace LineBuddy
     public class AppSettings
     {
         public int MessageUpdateIntervalMinutes { get; set; } = 5;
+        public string SelectedPersonality { get; set; } = "chitti"; // Default personality
         public List<string> EnabledMessageTypes { get; set; } = new()
         {
             "TimeBasedMessages",

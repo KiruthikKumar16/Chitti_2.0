@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Management;
 using System.Net.NetworkInformation;
 using Newtonsoft.Json;
+using LineBuddy.Models;
 
 namespace LineBuddy.Services
 {
@@ -72,7 +73,20 @@ namespace LineBuddy.Services
         {
             var hour = DateTime.Now.Hour;
             var dayOfWeek = DateTime.Now.DayOfWeek;
+            var timeOfDay = GetTimeOfDay(hour);
             
+            var parameters = new Dictionary<string, string>
+            {
+                { "timeofday", timeOfDay },
+                { "hour", hour.ToString() },
+                { "dayofweek", dayOfWeek.ToString() }
+            };
+            
+            return PersonalityManager.Instance.FormatMessage("time_based", parameters) ?? GetDefaultTimeMessage(hour, dayOfWeek);
+        }
+
+        private string GetDefaultTimeMessage(int hour, DayOfWeek dayOfWeek)
+        {
             return hour switch
             {
                 >= 6 and < 12 => "☀️ Good morning! Ready to tackle today's challenges?",
@@ -82,6 +96,18 @@ namespace LineBuddy.Services
                 _ when dayOfWeek == DayOfWeek.Friday => "🎉 TGIF! Weekend plans ready?",
                 _ when dayOfWeek == DayOfWeek.Monday => "💪 Monday motivation! Let's crush this week!",
                 _ => $"🌙 {DateTime.Now:HH:mm} - Night owl mode activated!"
+            };
+        }
+
+        private string GetTimeOfDay(int hour)
+        {
+            return hour switch
+            {
+                >= 6 and < 12 => "morning",
+                >= 12 and < 14 => "lunch",
+                >= 14 and < 18 => "afternoon",
+                >= 18 and < 22 => "evening",
+                _ => "night"
             };
         }
 
@@ -167,17 +193,29 @@ namespace LineBuddy.Services
                 var ramUsage = GetRAMUsage();
                 var cpuUsage = GetCPUUsage();
                 
-                if (ramUsage > 80)
-                    return $"⚠️ RAM at {ramUsage}% - Consider closing some apps";
-                if (cpuUsage > 80)
-                    return $"🔥 CPU at {cpuUsage}% - System working hard!";
+                var parameters = new Dictionary<string, string>
+                {
+                    { "ramusage", ramUsage.ToString() },
+                    { "cpuusage", cpuUsage.ToString() }
+                };
                 
-                return $"✅ System healthy - CPU: {cpuUsage}%, RAM: {ramUsage}%";
+                string messageType = (ramUsage > 80 || cpuUsage > 80) ? "system_warning" : "system_healthy";
+                
+                return PersonalityManager.Instance.FormatMessage(messageType, parameters) ?? GetDefaultSystemMessage(ramUsage, cpuUsage);
             }
             catch
             {
-                return "💻 System running smoothly - All good!";
+                return PersonalityManager.Instance.FormatMessage("system_error", null) ?? "💻 System running smoothly - All good!";
             }
+        }
+
+        private string GetDefaultSystemMessage(int ramUsage, int cpuUsage)
+        {
+            if (ramUsage > 80)
+                return $"⚠️ RAM at {ramUsage}% - Consider closing some apps";
+            if (cpuUsage > 80)
+                return $"🔥 CPU at {cpuUsage}% - System working hard!";
+            return $"✅ System healthy - CPU: {cpuUsage}%, RAM: {ramUsage}%";
         }
 
         private string GetNetworkStatusMessage()
@@ -185,14 +223,26 @@ namespace LineBuddy.Services
             try
             {
                 var ping = GetNetworkLatency();
-                if (ping > 100)
-                    return $"🐌 Network slow - {ping}ms latency detected";
-                return $"🚀 Network fast - {ping}ms ping to internet";
+                var parameters = new Dictionary<string, string>
+                {
+                    { "ping", ping.ToString() }
+                };
+                
+                string messageType = ping > 100 ? "network_slow" : "network_fast";
+                
+                return PersonalityManager.Instance.FormatMessage(messageType, parameters) ?? GetDefaultNetworkMessage(ping);
             }
             catch
             {
-                return "🌐 Connected and ready - Internet available!";
+                return PersonalityManager.Instance.FormatMessage("network_error", null) ?? "🌐 Connected and ready - Internet available!";
             }
+        }
+
+        private string GetDefaultNetworkMessage(int ping)
+        {
+            if (ping > 100)
+                return $"🐌 Network slow - {ping}ms latency detected";
+            return $"🚀 Network fast - {ping}ms ping to internet";
         }
 
         private async Task<string> GetTechNewsMessageAsync()

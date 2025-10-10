@@ -195,6 +195,71 @@
                 </StackPanel>
             </GroupBox>
 
+            <!-- Personality Selection -->
+            <GroupBox Header="AI Personality" Foreground="White" Margin="0,0,0,15">
+                <StackPanel Margin="10">
+                    <Label Content="Choose your AI personality:" Foreground="White" Margin="0,0,0,5"/>
+                    <ComboBox x:Name="PersonalityComboBox" 
+                              Background="#FF3F3F46" 
+                              Foreground="White" 
+                              BorderBrush="#FF686868"
+                              Margin="0,5,0,10"
+                              SelectionChanged="PersonalityComboBox_SelectionChanged">
+                        <ComboBox.Resources>
+                            <Style TargetType="ComboBox">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="#FF3F3F46"/>
+                                <Setter Property="BorderBrush" Value="#FF686868"/>
+                            </Style>
+                            <Style TargetType="ComboBoxItem">
+                                <Setter Property="Background" Value="#FF3F3F46"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Padding" Value="8,4"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsHighlighted" Value="True">
+                                        <Setter Property="Background" Value="#FF007ACC"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="#FF005A9B"/>
+                                        <Setter Property="Foreground" Value="White"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ComboBox.Resources>
+                        <ComboBoxItem Content="Chitti (Default)" Tag="chitti"/>
+                        <ComboBoxItem Content="JARVIS (Tony Stark's AI)" Tag="jarvis"/>
+                        <ComboBoxItem Content="Thanos (The Mad Titan)" Tag="thanos"/>
+                        <ComboBoxItem Content="Iron Man (Tony Stark)" Tag="ironman"/>
+                        <ComboBoxItem Content="Jack Sparrow (Pirate Captain)" Tag="jacksparrow"/>
+                        <ComboBoxItem Content="Sherlock Holmes (Master Detective)" Tag="sherlock"/>
+                        <ComboBoxItem Content="GLaDOS (Portal AI)" Tag="glados"/>
+                        <ComboBoxItem Content="Yoda (Jedi Master)" Tag="yoda"/>
+                        <ComboBoxItem Content="Deadpool (Merc with a Mouth)" Tag="deadpool"/>
+                    </ComboBox>
+                    
+                    <StackPanel x:Name="PersonalityPreviewPanel" Margin="0,5,0,0">
+                        <Label Content="Preview:" Foreground="White" FontWeight="SemiBold"/>
+                        <TextBlock x:Name="PersonalityPreviewText" 
+                                   Text="Select a personality to see preview" 
+                                   Foreground="#FFB0B0B0" 
+                                   TextWrapping="Wrap" 
+                                   Margin="0,2,0,5"/>
+                        <TextBlock x:Name="PersonalityDescriptionText" 
+                                   Text="" 
+                                   Foreground="#FF888888" 
+                                   FontSize="11" 
+                                   TextWrapping="Wrap" 
+                                   Margin="0,0,0,5"/>
+                    </StackPanel>
+                    
+                    <TextBlock Text="💡 Personality affects all AI responses, messages, and command feedback" 
+                               Foreground="Orange" 
+                               FontSize="11" 
+                               Margin="0,5,0,0"/>
+                </StackPanel>
+            </GroupBox>
+
             <!-- Watchlists Settings -->
             <GroupBox Header="Watchlists" Foreground="White" Margin="0,0,0,15">
                 <StackPanel Margin="10">

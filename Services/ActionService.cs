@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using LineBuddy.Models;
 
 namespace LineBuddy.Services
 {
@@ -17,38 +19,54 @@ namespace LineBuddy.Services
         {
             target = (target ?? string.Empty).Trim().ToLower();
             query = (query ?? string.Empty).Trim();
-            if (string.IsNullOrWhiteSpace(query)) return "⚠️ No query provided";
+            if (string.IsNullOrWhiteSpace(query)) 
+            {
+                return PersonalityManager.Instance.FormatMessage("no_query", null) ?? "⚠️ No query provided";
+            }
+
+            var parameters = new Dictionary<string, string> { { "query", query } };
 
             switch (target)
             {
                 case "youtube":
-                    return OpenUrl($"https://www.youtube.com/results?search_query={Uri.EscapeDataString(query)}", $"🔊 Playing on YouTube: {query}");
+                    return OpenUrl($"https://www.youtube.com/results?search_query={Uri.EscapeDataString(query)}", 
+                        PersonalityManager.Instance.FormatMessage("youtube_play", parameters) ?? $"🔊 Playing on YouTube: {query}");
                 case "ytmusic":
                 case "youtube-music":
-                    return OpenUrl($"https://music.youtube.com/search?q={Uri.EscapeDataString(query)}", $"🔊 Playing on YouTube Music: {query}");
+                    return OpenUrl($"https://music.youtube.com/search?q={Uri.EscapeDataString(query)}", 
+                        PersonalityManager.Instance.FormatMessage("ytmusic_play", parameters) ?? $"🔊 Playing on YouTube Music: {query}");
                 case "spotify":
-                    return OpenUrl($"spotify:search:{Uri.EscapeDataString(query)}", $"🔊 Searching Spotify: {query}");
+                    return OpenUrl($"spotify:search:{Uri.EscapeDataString(query)}", 
+                        PersonalityManager.Instance.FormatMessage("spotify_play", parameters) ?? $"🔊 Searching Spotify: {query}");
                 case "local":
                     return PlayLocal(query);
                 default:
                     // default to YouTube search
-                    return OpenUrl($"https://www.youtube.com/results?search_query={Uri.EscapeDataString(query)}", $"🔊 Playing: {query}");
+                    return OpenUrl($"https://www.youtube.com/results?search_query={Uri.EscapeDataString(query)}", 
+                        PersonalityManager.Instance.FormatMessage("play_default", parameters) ?? $"🔊 Playing: {query}");
             }
         }
 
         public string Open(string urlOrQuery)
         {
             var text = (urlOrQuery ?? string.Empty).Trim();
-            if (string.IsNullOrWhiteSpace(text)) return "⚠️ Nothing to open";
+            if (string.IsNullOrWhiteSpace(text)) 
+            {
+                return PersonalityManager.Instance.FormatMessage("nothing_to_open", null) ?? "⚠️ Nothing to open";
+            }
 
             if (Uri.TryCreate(text, UriKind.Absolute, out var uri) &&
                 (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps || uri.Scheme == "spotify"))
             {
-                return OpenUrl(uri.ToString(), $"🔗 Opening: {uri.Host}");
+                var parameters = new Dictionary<string, string> { { "url", uri.Host } };
+                return OpenUrl(uri.ToString(), 
+                    PersonalityManager.Instance.FormatMessage("url_open", parameters) ?? $"🔗 Opening: {uri.Host}");
             }
 
             // treat as YouTube search if not a URL
-            return OpenUrl($"https://www.youtube.com/results?search_query={Uri.EscapeDataString(text)}", $"🔎 Searching: {text}");
+            var searchParams = new Dictionary<string, string> { { "query", text } };
+            return OpenUrl($"https://www.youtube.com/results?search_query={Uri.EscapeDataString(text)}", 
+                PersonalityManager.Instance.FormatMessage("search_default", searchParams) ?? $"🔎 Searching: {text}");
         }
 
         public async Task<string> UtubeAsync(string query)

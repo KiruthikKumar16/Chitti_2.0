@@ -1,9 +1,12 @@
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Media;
+using LineBuddy.Services;
+using LineBuddy.Models;
 
 namespace LineBuddy
 {
@@ -11,6 +14,7 @@ namespace LineBuddy
     {
         private AppSettings _settings;
         private Action<AppSettings> _onSettingsChanged;
+        private List<CheckBox> _smartTagCheckBoxes;
 
         public SettingsWindow(AppSettings currentSettings, Action<AppSettings> onSettingsChanged)
         {
@@ -61,6 +65,9 @@ namespace LineBuddy
             
             // Load LLM settings
             LoadLLMSettings();
+            
+            // Load personality settings
+            LoadPersonalitySettings();
         }
 
         private void IntervalSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -112,7 +119,7 @@ namespace LineBuddy
             }
         }
 
-        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        private async void SaveButton_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -144,23 +151,20 @@ namespace LineBuddy
                 _settings.UseScreenshotContext = ScreenshotContextCheckBox.IsChecked ?? false;
                 _settings.CaptureActiveWindowOnly = ActiveWindowOnlyCheckBox.IsChecked ?? true;
 
-                // Save watchlists
-                _settings.StockWatchlist = StockWatchlistTextBox.Text
-                    .Split(',')
-                    .Select(s => s.Trim().ToUpper())
-                    .Where(s => !string.IsNullOrEmpty(s))
-                    .ToList();
-
-                _settings.CryptoWatchlist = CryptoWatchlistTextBox.Text
-                    .Split(',')
-                    .Select(s => s.Trim().ToLower())
-                    .Where(s => !string.IsNullOrEmpty(s))
-                    .ToList();
+                // Parse watchlists efficiently
+                _settings.StockWatchlist = ParseWatchlist(StockWatchlistTextBox.Text, toUpper: true);
+                _settings.CryptoWatchlist = ParseWatchlist(CryptoWatchlistTextBox.Text, toUpper: false);
 
                 _settings.WeatherLocation = WeatherLocationTextBox.Text.Trim();
                 
                 // Save LLM settings
                 SaveLLMSettings();
+
+                // Save personality settings
+                if (PersonalityComboBox.SelectedItem is ComboBoxItem selectedPersonalityItem)
+                {
+                    _settings.SelectedPersonality = selectedPersonalityItem.Tag.ToString();
+                }
 
                 // Validate at least one message type is selected
                 if (!_settings.GetActiveMessageTypes().Any())
@@ -170,11 +174,17 @@ namespace LineBuddy
                     return;
                 }
 
-                // Save settings to file
-                _settings.Save();
+                // Save settings to file asynchronously
+                await Task.Run(() => _settings.Save());
 
                 // Notify main window of changes
                 _onSettingsChanged?.Invoke(_settings);
+                
+                // Update personality after settings are saved
+                if (PersonalityComboBox.SelectedItem is ComboBoxItem selectedPersonalityItem2)
+                {
+                    PersonalityManager.Instance.SetPersonality(selectedPersonalityItem2.Tag.ToString());
+                }
 
                 MessageBox.Show("Settings saved successfully!", "Settings", 
                     MessageBoxButton.OK, MessageBoxImage.Information);
@@ -201,21 +211,35 @@ namespace LineBuddy
 
         private void SelectAllSmartTags_Click(object sender, RoutedEventArgs e)
         {
-            // Find all CheckBox controls in the Smart Tags section and check them
-            var scrollViewer = FindName("SmartTagsScrollViewer") as ScrollViewer;
-            if (scrollViewer != null)
-            {
-                SetAllCheckBoxesInContainer(scrollViewer, true);
-            }
+            CacheSmartTagCheckBoxes();
+            foreach (var cb in _smartTagCheckBoxes) cb.IsChecked = true;
         }
 
         private void DeselectAllSmartTags_Click(object sender, RoutedEventArgs e)
         {
-            // Find all CheckBox controls in the Smart Tags section and uncheck them
+            CacheSmartTagCheckBoxes();
+            foreach (var cb in _smartTagCheckBoxes) cb.IsChecked = false;
+        }
+
+        private void CacheSmartTagCheckBoxes()
+        {
+            if (_smartTagCheckBoxes != null) return;
+            
+            _smartTagCheckBoxes = new List<CheckBox>();
             var scrollViewer = FindName("SmartTagsScrollViewer") as ScrollViewer;
             if (scrollViewer != null)
             {
-                SetAllCheckBoxesInContainer(scrollViewer, false);
+                CollectCheckBoxes(scrollViewer, _smartTagCheckBoxes);
+            }
+        }
+
+        private void CollectCheckBoxes(DependencyObject container, List<CheckBox> checkBoxes)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(container); i++)
+            {
+                var child = VisualTreeHelper.GetChild(container, i);
+                if (child is CheckBox cb) checkBoxes.Add(cb);
+                else CollectCheckBoxes(child, checkBoxes);
             }
         }
 
@@ -234,6 +258,115 @@ namespace LineBuddy
                     SetAllCheckBoxesInContainer(child, isChecked);
                 }
             }
+        }
+
+        private void LoadPersonalitySettings()
+        {
+            // Set selected personality
+            foreach (ComboBoxItem item in PersonalityComboBox.Items)
+            {
+                if (item.Tag.ToString() == _settings.SelectedPersonality)
+                {
+                    PersonalityComboBox.SelectedItem = item;
+                    UpdatePersonalityPreview(item.Tag.ToString());
+                    break;
+                }
+            }
+        }
+
+        private void PersonalityComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (PersonalityComboBox.SelectedItem is ComboBoxItem selectedItem)
+            {
+                string personalityId = selectedItem.Tag.ToString();
+                UpdatePersonalityPreview(personalityId);
+                // Don't change settings or notify until Save is clicked
+            }
+        }
+
+        private void UpdatePersonalityPreview(string personalityId)
+        {
+            // Use a simple switch for faster lookup instead of PersonalityManager
+            string greeting, description, voice, tone;
+            
+            switch (personalityId.ToLower())
+            {
+                case "jarvis":
+                    greeting = "Good {timeofday}, sir. How may I be of service?";
+                    description = "Sophisticated British butler AI";
+                    voice = "refined, polished, ultra-professional, British butler";
+                    tone = "courteous, efficient, slightly formal but warm";
+                    break;
+                case "thanos":
+                    greeting = "I am inevitable. What do you require?";
+                    description = "The Mad Titan with cosmic power";
+                    voice = "deep, commanding, philosophical, slightly menacing";
+                    tone = "confident, ominous, wise, intimidating";
+                    break;
+                case "ironman":
+                    greeting = "Hey there! Tony Stark here. What can I build for you?";
+                    description = "Genius billionaire playboy philanthropist";
+                    voice = "witty, confident, tech-savvy, slightly arrogant";
+                    tone = "charismatic, innovative, bold, slightly cocky";
+                    break;
+                case "jacksparrow":
+                    greeting = "Ahoy! Captain Jack Sparrow at your service, savvy?";
+                    description = "Eccentric pirate captain with a heart of gold";
+                    voice = "slurred, theatrical, witty, slightly drunk";
+                    tone = "charming, unpredictable, clever, roguish";
+                    break;
+                case "sherlock":
+                    greeting = "Elementary, my dear Watson. What case shall we solve?";
+                    description = "Master detective with extraordinary deductive powers";
+                    voice = "precise, analytical, slightly condescending, British";
+                    tone = "logical, observant, brilliant, slightly arrogant";
+                    break;
+                case "glados":
+                    greeting = "Oh, it's you. How... unexpected. What do you want?";
+                    description = "Sarcastic AI from Aperture Science";
+                    voice = "sarcastic, monotone, slightly menacing, robotic";
+                    tone = "sardonic, intelligent, passive-aggressive, darkly humorous";
+                    break;
+                case "yoda":
+                    greeting = "Greetings, young one. How may I help you, I can?";
+                    description = "Wise Jedi Master with ancient knowledge";
+                    voice = "wise, old, slightly broken English, mystical";
+                    tone = "ancient, profound, patient, slightly cryptic";
+                    break;
+                case "deadpool":
+                    greeting = "Hey there, chimichanga! What's the sitch?";
+                    description = "Merc with a mouth who breaks the fourth wall";
+                    voice = "witty, crude, self-aware, pop-culture obsessed";
+                    tone = "irreverent, hilarious, unpredictable, meta";
+                    break;
+                default: // chitti
+                    greeting = "Hey there! Ready to help! 😊";
+                    description = "Witty, concise, friendly AI assistant";
+                    voice = "witty, concise, friendly, slightly playful";
+                    tone = "confident, uplifting, helpful, professional";
+                    break;
+            }
+            
+            PersonalityPreviewText.Text = greeting;
+            PersonalityDescriptionText.Text = $"{description}\n\nVoice: {voice}\nTone: {tone}";
+        }
+
+        private List<string> ParseWatchlist(string input, bool toUpper)
+        {
+            if (string.IsNullOrWhiteSpace(input)) return new List<string>();
+            
+            var items = input.Split(',', StringSplitOptions.RemoveEmptyEntries);
+            var result = new List<string>(items.Length);
+            
+            for (int i = 0; i < items.Length; i++)
+            {
+                var trimmed = items[i].Trim();
+                if (trimmed.Length > 0)
+                {
+                    result.Add(toUpper ? trimmed.ToUpper() : trimmed.ToLower());
+                }
+            }
+            return result;
         }
 
         private void UpdatePastingSpeedLabel(int speed)

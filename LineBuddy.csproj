@@ -20,6 +20,7 @@
     <Resource Include="chitti.ico" />
     <Resource Include="chitti.png" />
     <None Include="personality.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="Personalities\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

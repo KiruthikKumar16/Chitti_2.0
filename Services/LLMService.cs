@@ -385,30 +385,9 @@ namespace LineBuddy.Services
 
     internal static class PersonalityProvider
     {
-        private static string _cachedPrompt;
-
         public static string GetSystemPrompt()
         {
-            if (!string.IsNullOrEmpty(_cachedPrompt)) return _cachedPrompt;
-            try
-            {
-                var baseDir = AppDomain.CurrentDomain.BaseDirectory;
-                var path = Path.Combine(baseDir, "personality.json");
-                if (File.Exists(path))
-                {
-                    dynamic json = JsonConvert.DeserializeObject(File.ReadAllText(path));
-                    string prompt = json?.system_prompt;
-                    if (!string.IsNullOrWhiteSpace(prompt))
-                    {
-                        _cachedPrompt = prompt.ToString();
-                        return _cachedPrompt;
-                    }
-                }
-            }
-            catch { }
-            // Fallback
-            _cachedPrompt = "You are Chitti. Respond in one single line (no line breaks), max ~30 words, no markdown. Be helpful, concrete, friendly, slightly playful, and professional.";
-            return _cachedPrompt;
+            return PersonalityManager.Instance.GetSystemPrompt();
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using LineBuddy.Services.Actions;
+using LineBuddy.Models;
 
 namespace LineBuddy.Services
 {
@@ -207,7 +208,12 @@ namespace LineBuddy.Services
             if (isSafe)
             {
                 if (!AllowedSafe.Contains(action)) return (false, string.Empty, false, null);
-                if (!IsActionEnabledBySettings(action)) return (true, "⚠️ Action disabled in settings", false, null);
+                if (!IsActionEnabledBySettings(action)) 
+                {
+                    var disabledMsg = PersonalityManager.Instance.FormatMessage("action_disabled", new Dictionary<string, string> { { "action", action } }) 
+                                    ?? "⚠️ Action disabled in settings";
+                    return (true, disabledMsg, false, null);
+                }
                 var msg = await ExecuteAsync(action, args);
                 return (true, msg, false, null);
             }
@@ -216,7 +222,9 @@ namespace LineBuddy.Services
                 if (!AllowedRisky.Contains(action)) return (false, string.Empty, false, null);
                 if (!_settings.AllowRiskyActionsWithConfirmation) return (false, string.Empty, false, null);
                 // Prepare confirm callback
-                return (true, $"Confirm: {action}?", true, async () => await ExecuteAsync(action, args));
+                var confirmMsg = PersonalityManager.Instance.FormatMessage("action_confirm", new Dictionary<string, string> { { "action", action } }) 
+                                ?? $"Confirm: {action}?";
+                return (true, confirmMsg, true, async () => await ExecuteAsync(action, args));
             }
         }
 

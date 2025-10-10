@@ -28,3 +28,12 @@ C:\Users\New\Desktop\Chitti_2.0\obj\Debug\net8.0-windows\ref\Chitti.dll
 C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\personality.json
 C:\Users\New\Desktop\Chitti_2.0\obj\Debug\net8.0-windows\InfoWindow.baml
 C:\Users\New\Desktop\Chitti_2.0\obj\Debug\net8.0-windows\InfoWindow.g.cs
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\chitti.json
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\deadpool.json
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\glados.json
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\ironman.json
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\jacksparrow.json
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\jarvis.json
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\sherlock.json
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\thanos.json
+C:\Users\New\Desktop\Chitti_2.0\bin\Debug\net8.0-windows\Personalities\yoda.json

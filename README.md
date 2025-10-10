@@ -66,6 +66,85 @@ dotnet run
 4. The response will appear in the same text box
 5. Press **Escape** or click the X button to clear
 
+### Smart Tags
+
+Chitti includes 61 built-in smart tags for instant text processing. Just type your text with a smart tag:
+
+#### Productivity & Writing
+- **`/grammar`** - Fix grammar and spelling errors
+- **`/tldr`** - Ultra-short summary (one sentence max)
+- **`/eli5`** - Explain like I'm 5 (simple explanations)
+- **`/proofread`** - Deep proofreading with suggestions
+- **`/keywords`** - Extract key terms and phrases
+- **`/outline`** - Convert to structured outline
+- **`/action`** - Extract action items and tasks
+- **`/meeting`** - Format as meeting notes with agenda
+- **`/seo`** - Optimize text for SEO with keywords
+- **`/summary`** - Create a concise summary
+- **`/expand`** - Expand and elaborate on text
+
+#### Communication & Tone
+- **`/polite`** - Make text more polite and professional
+- **`/formal`** - Convert to formal language
+- **`/casual`** - Convert to casual language
+- **`/confident`** - Make text more assertive and confident
+- **`/empathy`** - Add empathetic and understanding tone
+- **`/persuasive`** - Make text more convincing
+- **`/apology`** - Format as sincere apology
+- **`/congratulate`** - Format as congratulations message
+- **`/decline`** - Politely decline or say no
+
+#### Coding & Technical
+- **`/code`** - Review and improve code
+- **`/debug`** - Analyze code for bugs and issues
+- **`/comment`** - Add comprehensive code comments
+- **`/optimize`** - Suggest performance optimizations
+- **`/test`** - Generate unit tests for code
+- **`/explain`** - Explain code in plain English
+
+#### Creative & Fun
+- **`/creative`** - Add creativity and flair
+- **`/joke`** - Make text humorous and funny
+- **`/poem`** - Convert to poem or verse
+- **`/story`** - Expand into short story
+- **`/emoji`** - Add relevant emojis throughout
+- **`/gen-z`** - Rewrite in Gen-Z slang
+- **`/pirate`** - Rewrite in pirate speak (fun!)
+- **`/shakespeare`** - Rewrite in Shakespearean English
+
+#### Data & Analysis
+- **`/compare`** - Compare and contrast items
+- **`/pros-cons`** - List pros and cons
+- **`/fact-check`** - Verify claims and provide sources
+- **`/stats`** - Extract numbers and statistics
+
+#### Advanced Daily Use
+- **`/schedule`** - Extract dates, times, and create schedule format
+- **`/price`** - Extract pricing info and calculate totals/comparisons
+- **`/recipe`** - Format as step-by-step recipe with ingredients
+- **`/directions`** - Convert to clear step-by-step directions
+- **`/simplify`** - Simplify complex text to basic language
+- **`/technical`** - Convert to technical/expert language
+- **`/linkedin`** - Optimize for LinkedIn post format
+- **`/tweet`** - Condense to Twitter/X format (280 chars)
+- **`/hashtags`** - Generate relevant hashtags for social media
+- **`/reply`** - Generate appropriate reply to message/email
+- **`/bullets`** - Convert to bullet points
+- **`/email`** - Format as professional email
+
+#### Smart Processing
+- **`/continue`** - Continue/complete the text naturally
+- **`/rephrase`** - Rephrase without changing meaning
+- **`/questions`** - Generate relevant questions about the topic
+- **`/title`** - Generate catchy title/headline
+- **`/tags`** - Generate categorization tags
+- **`/sentiment`** - Analyze sentiment (positive/negative/neutral)
+- **`/readability`** - Improve readability and clarity
+- **`/legal`** - Convert to legal/formal document language
+- **`/translate`** - Translate to English
+- **`/solve`** - Provide solution or answer
+- **`/screen`** - Process with screen context
+
 ### Smart Automation Commands
 
 Chitti understands natural language commands. Just type what you want:

@@ -50,12 +50,18 @@ namespace LineBuddy.Services
                 var response = await _httpClient.PostAsync(apiUrl, content);
                 var responseContent = await response.Content.ReadAsStringAsync();
 
+                // Debug: Log the response
+                System.Diagnostics.Debug.WriteLine($"LLM Response Status: {response.StatusCode}");
+                System.Diagnostics.Debug.WriteLine($"LLM Response Content: {responseContent}");
+
                 if (!response.IsSuccessStatusCode)
                 {
                     return $"API Error ({response.StatusCode}): {responseContent}";
                 }
 
-                return ParseResponse(responseContent);
+                var parsedResult = ParseResponse(responseContent);
+                System.Diagnostics.Debug.WriteLine($"Parsed Result: {parsedResult}");
+                return parsedResult;
             }
             catch (Exception ex)
             {

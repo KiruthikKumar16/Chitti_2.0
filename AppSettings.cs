@@ -39,7 +39,14 @@ namespace LineBuddy
         public int SmartTagsPastingSpeed { get; set; } = 50; // milliseconds per character for pasting animation
         public List<string> EnabledBuiltInTags { get; set; } = new() 
         { 
-            "/grammar", "/polite", "/casual", "/formal", "/short", "/expand", "/solve", "/translate", "/screen"
+            "/grammar", "/polite", "/casual", "/formal", "/summary", "/expand", "/solve", "/translate", "/screen",
+            "/tldr", "/eli5", "/proofread", "/keywords", "/outline", "/action", "/meeting", "/seo",
+            "/confident", "/empathy", "/persuasive", "/apology", "/congratulate", "/decline",
+            "/debug", "/comment", "/optimize", "/test", "/explain",
+            "/joke", "/poem", "/story", "/emoji", "/gen-z", "/pirate", "/shakespeare",
+            "/compare", "/pros-cons", "/fact-check", "/stats",
+            "/schedule", "/price", "/recipe", "/directions", "/simplify", "/technical", "/linkedin", "/tweet", "/hashtags", "/reply",
+            "/continue", "/rephrase", "/questions", "/title", "/tags", "/sentiment", "/readability", "/legal"
         };
         public Dictionary<string, string> CustomTags { get; set; } = new();
         

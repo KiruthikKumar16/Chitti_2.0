@@ -190,6 +190,43 @@
                             </StackPanel>
                         </GroupBox>
                         
+                        <!-- Smart Tags -->
+                        <GroupBox Header="Smart Tags (61 Available)" Foreground="White" Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Productivity &amp; Writing:" FontSize="14" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,0,0,8"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• /grammar, /tldr, /eli5, /proofread, /keywords, /outline, /action, /meeting, /seo"/>
+                                </TextBlock>
+                                <TextBlock Text="Communication &amp; Tone:" FontSize="14" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,8,0,8"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• /polite, /formal, /casual, /confident, /empathy, /persuasive, /apology, /congratulate, /decline"/>
+                                </TextBlock>
+                                <TextBlock Text="Coding &amp; Technical:" FontSize="14" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,8,0,8"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• /code, /debug, /comment, /optimize, /test, /explain"/>
+                                </TextBlock>
+                                <TextBlock Text="Creative &amp; Fun:" FontSize="14" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,8,0,8"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,0,0,8" FontSize="13">
+                                    <Run Text="• /creative, /joke, /poem, /story, /emoji, /gen-z, /pirate, /shakespeare"/>
+                                </TextBlock>
+                                <TextBlock Text="Advanced Daily Use:" FontSize="14" FontWeight="SemiBold" 
+                                           Foreground="White" Margin="0,8,0,8"/>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• /schedule, /price, /recipe, /directions, /simplify, /technical, /linkedin, /tweet, /hashtags, /reply"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" Margin="0,8,0,8" FontSize="13">
+                                    <Run Text="• /continue, /rephrase, /questions, /title, /tags, /sentiment, /readability, /legal"/>
+                                </TextBlock>
+                                <TextBlock TextWrapping="Wrap" Foreground="#FFB0B0B0" FontSize="13">
+                                    <Run Text="• /translate, /solve, /screen, /bullets, /email, /summary, /expand"/>
+                                </TextBlock>
+                            </StackPanel>
+                        </GroupBox>
+                        
                         <!-- System Monitoring -->
                         <GroupBox Header="System Monitoring" Foreground="White" Margin="0,0,0,15">
                             <StackPanel Margin="10">

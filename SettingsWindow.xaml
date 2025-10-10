@@ -282,28 +282,132 @@
                                            Foreground="Orange" 
                                            FontSize="11" 
                                            Margin="0,5,0,10"/>
+                                
                             </StackPanel>
                         </GroupBox>
                         
                         <!-- Available Smart Tags -->
-                        <GroupBox Header="Available Smart Tags" Foreground="White" Margin="0,0,0,15">
+                        <GroupBox Header="Available Smart Tags (61 total)" Foreground="White" Margin="0,0,0,15">
                             <StackPanel Margin="10">
-                                <Label Content="Built-in Smart Tags:" Foreground="White" Margin="0,0,0,5"/>
-                                <ScrollViewer Height="160" VerticalScrollBarVisibility="Auto" Background="#FF3F3F46" Margin="0,0,0,10">
+                                <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                                    <Label Content="Built-in Smart Tags:" Foreground="White"/>
+                                    <Button Content="Select All" Background="#FF4A90E2" Foreground="White" BorderThickness="0" 
+                                            Padding="8,4" Margin="10,0,5,0" FontSize="11" Click="SelectAllSmartTags_Click"/>
+                                    <Button Content="Deselect All" Background="#FF2D2D2D" Foreground="White" BorderThickness="0" 
+                                            Padding="8,4" Margin="5,0,0,0" FontSize="11" Click="DeselectAllSmartTags_Click"/>
+                                </StackPanel>
+                                <ScrollViewer x:Name="SmartTagsScrollViewer" Height="300" VerticalScrollBarVisibility="Auto" Background="#FF3F3F46" Margin="0,0,0,10">
                                     <StackPanel x:Name="BuiltInTagsPanel" Margin="10">
-                                        <CheckBox Content="/grammar - Fix grammar and spelling errors" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/polite - Make text more polite and professional" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/casual - Make text more casual and friendly" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/formal - Make text more formal and business-like" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/short - Make text more concise and brief" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/expand - Add more detail and explanation" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/solve - Solve problems or answer questions" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/translate - Translate text to English" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/screen - Process with screen context (auto-captures screenshot)" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/summarize - Create a brief summary" Foreground="White" IsChecked="True" Margin="0,3"/>
-                                        <CheckBox Content="/explain - Provide detailed explanation" Foreground="White" IsChecked="True" Margin="0,3"/>
+                                        
+                                        <!-- Productivity & Writing -->
+                                        <GroupBox Header="Productivity &amp; Writing" Foreground="#FF4A90E2" Margin="0,0,0,10">
+                                            <StackPanel Margin="10">
+                                                <CheckBox Content="/grammar - Fix grammar and spelling errors" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/tldr - Ultra-short summary (one sentence max)" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/eli5 - Explain like I'm 5 (simple explanations)" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/proofread - Deep proofreading with suggestions" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/keywords - Extract key terms and phrases" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/outline - Convert to structured outline" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/action - Extract action items and tasks" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/meeting - Format as meeting notes with agenda" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/seo - Optimize text for SEO with keywords" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/summary - Create a concise summary" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/expand - Expand and elaborate on text" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        
+                                        <!-- Communication & Tone -->
+                                        <GroupBox Header="Communication &amp; Tone" Foreground="#FF4A90E2" Margin="0,0,0,10">
+                                            <StackPanel Margin="10">
+                                                <CheckBox Content="/polite - Make text more polite and professional" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/formal - Convert to formal language" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/casual - Convert to casual language" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/confident - Make text more assertive and confident" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/empathy - Add empathetic and understanding tone" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/persuasive - Make text more convincing" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/apology - Format as sincere apology" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/congratulate - Format as congratulations message" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/decline - Politely decline or say no" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        
+                                        <!-- Coding & Technical -->
+                                        <GroupBox Header="Coding &amp; Technical" Foreground="#FF4A90E2" Margin="0,0,0,10">
+                                            <StackPanel Margin="10">
+                                                <CheckBox Content="/code - Review and improve code" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/debug - Analyze code for bugs and issues" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/comment - Add comprehensive code comments" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/optimize - Suggest performance optimizations" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/test - Generate unit tests for code" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/explain - Explain code in plain English" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        
+                                        <!-- Creative & Fun -->
+                                        <GroupBox Header="Creative &amp; Fun" Foreground="#FF4A90E2" Margin="0,0,0,10">
+                                            <StackPanel Margin="10">
+                                                <CheckBox Content="/creative - Add creativity and flair" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/joke - Make text humorous and funny" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/poem - Convert to poem or verse" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/story - Expand into short story" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/emoji - Add relevant emojis throughout" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/gen-z - Rewrite in Gen-Z slang" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/pirate - Rewrite in pirate speak (fun!)" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/shakespeare - Rewrite in Shakespearean English" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        
+                                        <!-- Data & Analysis -->
+                                        <GroupBox Header="Data &amp; Analysis" Foreground="#FF4A90E2" Margin="0,0,0,10">
+                                            <StackPanel Margin="10">
+                                                <CheckBox Content="/compare - Compare and contrast items" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/pros-cons - List pros and cons" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/fact-check - Verify claims and provide sources" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/stats - Extract numbers and statistics" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        
+                                        <!-- Advanced Daily Use -->
+                                        <GroupBox Header="Advanced Daily Use" Foreground="#FF4A90E2" Margin="0,0,0,10">
+                                            <StackPanel Margin="10">
+                                                <CheckBox Content="/schedule - Extract dates, times, and create schedule format" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/price - Extract pricing info and calculate totals/comparisons" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/recipe - Format as step-by-step recipe with ingredients" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/directions - Convert to clear step-by-step directions" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/simplify - Simplify complex text to basic language" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/technical - Convert to technical/expert language" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/linkedin - Optimize for LinkedIn post format" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/tweet - Condense to Twitter/X format (280 chars)" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/hashtags - Generate relevant hashtags for social media" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/reply - Generate appropriate reply to message/email" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/bullets - Convert to bullet points" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/email - Format as professional email" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        
+                                        <!-- Smart Processing -->
+                                        <GroupBox Header="Smart Processing" Foreground="#FF4A90E2" Margin="0,0,0,10">
+                                            <StackPanel Margin="10">
+                                                <CheckBox Content="/continue - Continue/complete the text naturally" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/rephrase - Rephrase without changing meaning" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/questions - Generate relevant questions about the topic" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/title - Generate catchy title/headline" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/tags - Generate categorization tags" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/sentiment - Analyze sentiment (positive/negative/neutral)" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/readability - Improve readability and clarity" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/legal - Convert to legal/formal document language" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/translate - Translate to English" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/solve - Provide solution or answer" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                                <CheckBox Content="/screen - Process with screen context" Foreground="White" Margin="0,2" IsChecked="True"/>
+                                            </StackPanel>
+                                        </GroupBox>
+                                        
                                     </StackPanel>
                                 </ScrollViewer>
+                                <TextBlock Text="💡 Uncheck any smart tags you don't want to use. Changes take effect immediately." 
+                                           Foreground="Orange" 
+                                           FontSize="11" 
+                                           Margin="0,5,0,0"/>
                             </StackPanel>
                         </GroupBox>
                         

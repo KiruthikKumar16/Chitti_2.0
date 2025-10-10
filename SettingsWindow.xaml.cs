@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Collections.Generic;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace LineBuddy
 {
@@ -196,6 +197,43 @@ namespace LineBuddy
         private void PastingSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             UpdatePastingSpeedLabel((int)e.NewValue);
+        }
+
+        private void SelectAllSmartTags_Click(object sender, RoutedEventArgs e)
+        {
+            // Find all CheckBox controls in the Smart Tags section and check them
+            var scrollViewer = FindName("SmartTagsScrollViewer") as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                SetAllCheckBoxesInContainer(scrollViewer, true);
+            }
+        }
+
+        private void DeselectAllSmartTags_Click(object sender, RoutedEventArgs e)
+        {
+            // Find all CheckBox controls in the Smart Tags section and uncheck them
+            var scrollViewer = FindName("SmartTagsScrollViewer") as ScrollViewer;
+            if (scrollViewer != null)
+            {
+                SetAllCheckBoxesInContainer(scrollViewer, false);
+            }
+        }
+
+        private void SetAllCheckBoxesInContainer(DependencyObject container, bool isChecked)
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(container); i++)
+            {
+                var child = VisualTreeHelper.GetChild(container, i);
+                
+                if (child is CheckBox checkBox)
+                {
+                    checkBox.IsChecked = isChecked;
+                }
+                else
+                {
+                    SetAllCheckBoxesInContainer(child, isChecked);
+                }
+            }
         }
 
         private void UpdatePastingSpeedLabel(int speed)

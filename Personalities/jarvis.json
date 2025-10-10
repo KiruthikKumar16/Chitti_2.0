@@ -38,7 +38,21 @@
     "smart_tags_processing": "Smart Tags: Processing with AI, sir...",
     "smart_tags_pasting": "Smart Tags: Typing result, sir...",
     "smart_tags_error": "Smart Tags: Error occurred, sir. Click to retry.",
-    "smart_tags_disabled": "Smart Tags monitoring disabled, sir. Click to toggle."
+    "smart_tags_disabled": "Smart Tags monitoring disabled, sir. Click to toggle.",
+    "weather_update": "Weather report, sir: {temp}°C with {wind} km/h winds in {location}",
+    "weather_error": "Weather data temporarily unavailable, sir. Shall we proceed with other tasks?",
+    "crypto_update": "{symbol} currently trading at ${price}, sir.",
+    "crypto_error": "Cryptocurrency markets temporarily inaccessible, sir. My apologies.",
+    "stock_update": "Exchange rates, sir: USD→EUR {eur}, USD→INR {inr}",
+    "stock_error": "Foreign exchange data unavailable at present, sir.",
+    "tech_news": "Technology news, sir: {headline}",
+    "tech_news_error": "News services temporarily offline, sir. Shall I try again later?",
+    "productivity_tip": "Productivity recommendation, sir: {tip}",
+    "quote_message": "Sir, a quote for you: \"{quote}\" — {author}",
+    "quote_error": "Quote service unavailable, sir. My apologies for the inconvenience.",
+    "joke_message": "A jest for you, sir: {setup} — {punchline}",
+    "joke_error": "Humor database temporarily inaccessible, sir.",
+    "no_active_messages": "All dynamic message types disabled, sir. Configure in settings."
   },
   "constraints": {
     "max_words": 35,

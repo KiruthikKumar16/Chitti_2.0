@@ -223,7 +223,21 @@ namespace LineBuddy.Services
                 { "smart_tags_processing", "Smart Tags: Processing" },
                 { "smart_tags_pasting", "Smart Tags: Pasting" },
                 { "smart_tags_error", "Smart Tags: Error" },
-                { "smart_tags_disabled", "Smart Tags: Disabled" }
+                { "smart_tags_disabled", "Smart Tags: Disabled" },
+                { "weather_update", "Weather: {temp}°C with {wind} km/h winds in {location}" },
+                { "weather_error", "Weather data unavailable" },
+                { "crypto_update", "{symbol} at ${price}" },
+                { "crypto_error", "Crypto data unavailable" },
+                { "stock_update", "USD→EUR {eur}, USD→INR {inr}" },
+                { "stock_error", "Market data unavailable" },
+                { "tech_news", "News: {headline}" },
+                { "tech_news_error", "News unavailable" },
+                { "productivity_tip", "Tip: {tip}" },
+                { "quote_message", "\"{quote}\" — {author}" },
+                { "quote_error", "Quotes unavailable" },
+                { "joke_message", "{setup} — {punchline}" },
+                { "joke_error", "Jokes unavailable" },
+                { "no_active_messages", "Configure message types in settings" }
             };
 
             var message = defaultMessages.ContainsKey(messageType) ? defaultMessages[messageType] : "Task completed.";

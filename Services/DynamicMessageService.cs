@@ -48,7 +48,7 @@ namespace LineBuddy.Services
 
             if (_activeMessageTypes.Count == 0)
             {
-                return "✨ Chitti ready - Configure message types in settings!";
+                return PersonalityManager.Instance.FormatMessage("no_active_messages", null);
             }
 
             var messageType = _activeMessageTypes[_currentMessageIndex];
@@ -82,21 +82,7 @@ namespace LineBuddy.Services
                 { "dayofweek", dayOfWeek.ToString() }
             };
             
-            return PersonalityManager.Instance.FormatMessage("time_based", parameters) ?? GetDefaultTimeMessage(hour, dayOfWeek);
-        }
-
-        private string GetDefaultTimeMessage(int hour, DayOfWeek dayOfWeek)
-        {
-            return hour switch
-            {
-                >= 6 and < 12 => "☀️ Good morning! Ready to tackle today's challenges?",
-                >= 12 and < 14 => "🍽️ Lunch time! Don't forget to take a break.",
-                >= 14 and < 18 => "⚡ Afternoon energy boost! How's your day going?",
-                >= 18 and < 22 => "🌅 Evening wind-down. Time to wrap up tasks.",
-                _ when dayOfWeek == DayOfWeek.Friday => "🎉 TGIF! Weekend plans ready?",
-                _ when dayOfWeek == DayOfWeek.Monday => "💪 Monday motivation! Let's crush this week!",
-                _ => $"🌙 {DateTime.Now:HH:mm} - Night owl mode activated!"
-            };
+            return PersonalityManager.Instance.FormatMessage("time_based", parameters);
         }
 
         private string GetTimeOfDay(int hour)
@@ -129,11 +115,19 @@ namespace LineBuddy.Services
                 dynamic w = JsonConvert.DeserializeObject(wJson);
                 double temp = (double)(w?.current_weather?.temperature ?? 20);
                 double wind = (double)(w?.current_weather?.windspeed ?? 0);
-                return $"🌤️ {temp:F0}°C, wind {wind:F0} km/h";
+                
+                var parameters = new Dictionary<string, string>
+                {
+                    { "temp", temp.ToString("F0") },
+                    { "wind", wind.ToString("F0") },
+                    { "location", location }
+                };
+                
+                return PersonalityManager.Instance.FormatMessage("weather_update", parameters);
             }
             catch
             {
-                return "🌤️ Weather unavailable right now";
+                return PersonalityManager.Instance.FormatMessage("weather_error", null);
             }
         }
 
@@ -146,11 +140,18 @@ namespace LineBuddy.Services
                 dynamic fx = JsonConvert.DeserializeObject(fxJson);
                 double eur = (double)(fx?.rates?.EUR ?? 0);
                 double inr = (double)(fx?.rates?.INR ?? 0);
-                return $"💱 USD→EUR {eur:F2}, USD→INR {inr:F2}";
+                
+                var parameters = new Dictionary<string, string>
+                {
+                    { "eur", eur.ToString("F2") },
+                    { "inr", inr.ToString("F2") }
+                };
+                
+                return PersonalityManager.Instance.FormatMessage("stock_update", parameters);
             }
             catch
             {
-                return "💱 FX rates unavailable";
+                return PersonalityManager.Instance.FormatMessage("stock_error", null);
             }
         }
 
@@ -163,26 +164,43 @@ namespace LineBuddy.Services
                 var url = $"https://api.coingecko.com/api/v3/simple/price?ids={Uri.EscapeDataString(ids)}&vs_currencies=usd";
                 var json = await _httpClient.GetStringAsync(url);
                 dynamic prices = JsonConvert.DeserializeObject(json);
-                if (prices == null) return "₿ Crypto unavailable";
+                
+                if (prices == null)
+                {
+                    return PersonalityManager.Instance.FormatMessage("crypto_error", null);
+                }
+                
                 if (prices.bitcoin != null)
                 {
                     double btc = (double)(prices.bitcoin.usd ?? 0);
-                    return $"₿ BTC ${btc:N0}";
+                    var parameters = new Dictionary<string, string>
+                    {
+                        { "symbol", "BTC" },
+                        { "price", btc.ToString("N0") }
+                    };
+                    return PersonalityManager.Instance.FormatMessage("crypto_update", parameters);
                 }
+                
                 foreach (var id in _settings.CryptoWatchlist)
                 {
                     var node = prices[id];
                     if (node != null)
                     {
                         double px = (double)(node.usd ?? 0);
-                        return $"₿ {id.ToUpper()} ${px:N0}";
+                        var parameters = new Dictionary<string, string>
+                        {
+                            { "symbol", id.ToUpper() },
+                            { "price", px.ToString("N0") }
+                        };
+                        return PersonalityManager.Instance.FormatMessage("crypto_update", parameters);
                     }
                 }
-                return "₿ Crypto unavailable";
+                
+                return PersonalityManager.Instance.FormatMessage("crypto_error", null);
             }
             catch
             {
-                return "₿ Crypto unavailable";
+                return PersonalityManager.Instance.FormatMessage("crypto_error", null);
             }
         }
 
@@ -201,21 +219,12 @@ namespace LineBuddy.Services
                 
                 string messageType = (ramUsage > 80 || cpuUsage > 80) ? "system_warning" : "system_healthy";
                 
-                return PersonalityManager.Instance.FormatMessage(messageType, parameters) ?? GetDefaultSystemMessage(ramUsage, cpuUsage);
+                return PersonalityManager.Instance.FormatMessage(messageType, parameters);
             }
             catch
             {
-                return PersonalityManager.Instance.FormatMessage("system_error", null) ?? "💻 System running smoothly - All good!";
+                return PersonalityManager.Instance.FormatMessage("system_error", null);
             }
-        }
-
-        private string GetDefaultSystemMessage(int ramUsage, int cpuUsage)
-        {
-            if (ramUsage > 80)
-                return $"⚠️ RAM at {ramUsage}% - Consider closing some apps";
-            if (cpuUsage > 80)
-                return $"🔥 CPU at {cpuUsage}% - System working hard!";
-            return $"✅ System healthy - CPU: {cpuUsage}%, RAM: {ramUsage}%";
         }
 
         private string GetNetworkStatusMessage()
@@ -230,19 +239,12 @@ namespace LineBuddy.Services
                 
                 string messageType = ping > 100 ? "network_slow" : "network_fast";
                 
-                return PersonalityManager.Instance.FormatMessage(messageType, parameters) ?? GetDefaultNetworkMessage(ping);
+                return PersonalityManager.Instance.FormatMessage(messageType, parameters);
             }
             catch
             {
-                return PersonalityManager.Instance.FormatMessage("network_error", null) ?? "🌐 Connected and ready - Internet available!";
+                return PersonalityManager.Instance.FormatMessage("network_error", null);
             }
-        }
-
-        private string GetDefaultNetworkMessage(int ping)
-        {
-            if (ping > 100)
-                return $"🐌 Network slow - {ping}ms latency detected";
-            return $"🚀 Network fast - {ping}ms ping to internet";
         }
 
         private async Task<string> GetTechNewsMessageAsync()
@@ -253,26 +255,41 @@ namespace LineBuddy.Services
                 var json = await _httpClient.GetStringAsync("https://hn.algolia.com/api/v1/search?tags=front_page");
                 dynamic data = JsonConvert.DeserializeObject(json);
                 string title = data?.hits?[0]?.title;
-                if (!string.IsNullOrWhiteSpace(title)) return $"📰 {title}";
+                
+                if (!string.IsNullOrWhiteSpace(title))
+                {
+                    var parameters = new Dictionary<string, string>
+                    {
+                        { "headline", title }
+                    };
+                    return PersonalityManager.Instance.FormatMessage("tech_news", parameters);
+                }
             }
             catch { }
-            return "📰 Tech news unavailable";
+            
+            return PersonalityManager.Instance.FormatMessage("tech_news_error", null);
         }
 
         private string GetProductivityMessage()
         {
-            var messages = new[]
+            var tips = new[]
             {
-                "🎯 Focus time! Block distractions for deep work",
-                "⏰ Pomodoro break? 25 min focused work pays off",
-                "📝 Quick reminder: Review your daily goals",
-                "🧠 Brain break time - Step away from screen!",
-                "✨ Pro tip: Organize desktop for better workflow",
-                "🔄 Auto-save reminder: Backup your work files",
-                "🎨 Creative block? Try changing your environment"
+                "Focus time! Block distractions for deep work",
+                "Pomodoro break? 25 min focused work pays off",
+                "Quick reminder: Review your daily goals",
+                "Brain break time - Step away from screen!",
+                "Organize desktop for better workflow",
+                "Auto-save reminder: Backup your work files",
+                "Creative block? Try changing your environment"
             };
             
-            return messages[_random.Next(messages.Length)];
+            var selectedTip = tips[_random.Next(tips.Length)];
+            var parameters = new Dictionary<string, string>
+            {
+                { "tip", selectedTip }
+            };
+            
+            return PersonalityManager.Instance.FormatMessage("productivity_tip", parameters);
         }
 
         private async Task<string> GetQuoteMessageAsync()
@@ -283,11 +300,20 @@ namespace LineBuddy.Services
                 dynamic arr = JsonConvert.DeserializeObject(json);
                 string q = arr?[0]?.q;
                 string a = arr?[0]?.a;
+                
                 if (!string.IsNullOrWhiteSpace(q) && !string.IsNullOrWhiteSpace(a))
-                    return $"💬 \"{q}\" — {a}";
+                {
+                    var parameters = new Dictionary<string, string>
+                    {
+                        { "quote", q },
+                        { "author", a }
+                    };
+                    return PersonalityManager.Instance.FormatMessage("quote_message", parameters);
+                }
             }
             catch { }
-            return "💬 Keep going—small steps add up";
+            
+            return PersonalityManager.Instance.FormatMessage("quote_error", null);
         }
 
         private async Task<string> GetJokeMessageAsync()
@@ -298,11 +324,20 @@ namespace LineBuddy.Services
                 dynamic joke = JsonConvert.DeserializeObject(json);
                 string setup = joke?.setup;
                 string punch = joke?.punchline;
+                
                 if (!string.IsNullOrWhiteSpace(setup) && !string.IsNullOrWhiteSpace(punch))
-                    return $"😄 {setup} — {punch}";
+                {
+                    var parameters = new Dictionary<string, string>
+                    {
+                        { "setup", setup },
+                        { "punchline", punch }
+                    };
+                    return PersonalityManager.Instance.FormatMessage("joke_message", parameters);
+                }
             }
             catch { }
-            return "😄 A smile is loading...";
+            
+            return PersonalityManager.Instance.FormatMessage("joke_error", null);
         }
 
         private int GetRAMUsage()
@@ -318,7 +353,7 @@ namespace LineBuddy.Services
                 }
             }
             catch { }
-            return _random.Next(30, 70);
+            return 0;
         }
 
         private int GetCPUUsage()
@@ -345,7 +380,7 @@ namespace LineBuddy.Services
             }
             catch
             {
-                return _random.Next(20, 100);
+                return 999;
             }
         }
 

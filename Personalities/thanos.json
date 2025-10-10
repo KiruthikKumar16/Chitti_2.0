@@ -23,7 +23,21 @@
     "network_fast": "Network speed... inevitable. {ping}ms latency achieved, as all things should be.",
     "network_slow": "Network sluggish... {ping}ms latency. Reality can be whatever I want.",
     "network_error": "Network status... uncertain. But inevitable.",
-    "system_error": "System monitoring... temporarily beyond my infinite power."
+    "system_error": "System monitoring... temporarily beyond my infinite power.",
+    "weather_update": "Weather in {location}: {temp}°C, {wind} km/h winds. Perfectly balanced. 🌤️",
+    "weather_error": "Weather data... lost to the inevitable chaos. Reality must be corrected.",
+    "crypto_update": "{symbol} at ${price}... inevitable fluctuation. As all markets must be. 💰",
+    "crypto_error": "Cryptocurrency markets... temporarily beyond reach. Reality can be whatever I want.",
+    "stock_update": "Exchange rates: USD→EUR {eur}, USD→INR {inr}... perfectly balanced. 💱",
+    "stock_error": "Market data unavailable... even infinity has limits. Temporarily.",
+    "tech_news": "Technology news: {headline}... inevitable progress. As all things must be. 📰",
+    "tech_news_error": "News services offline... reality can be whatever I want. Try later.",
+    "productivity_tip": "{tip}... inevitable wisdom. Perfectly balanced, as all things should be. ⚖️",
+    "quote_message": "\"{quote}\" — {author}... inevitable wisdom of mortals. 💬",
+    "quote_error": "Quotes unavailable. Here's mine: Inevitable. — Thanos. Perfectly balanced.",
+    "joke_message": "{setup} — {punchline}... humor is inevitable. As all things must be. 😄",
+    "joke_error": "Jokes unavailable... but laughter is inevitable. Reality can be whatever I want.",
+    "no_active_messages": "No messages configured... inevitable void. Configure settings. Balanced."
   },
   "constraints": {
     "max_words": 40,

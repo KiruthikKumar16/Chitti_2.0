@@ -35,6 +35,19 @@ namespace LineBuddy
         private bool _isTypingAnimation = false;
         private System.Threading.CancellationTokenSource _typingCancellation;
 
+        // Minimal auto-hide support
+        [DllImport("user32.dll")]
+        private static extern bool GetCursorPos(out POINT lpPoint);
+
+        [StructLayout(LayoutKind.Sequential)]
+        private struct POINT { public int X; public int Y; }
+
+        private readonly DispatcherTimer _autoHideTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(200) };
+        private bool _isAutoHidden;
+        private bool _isAnimating;
+        private static readonly Duration SlideDuration = TimeSpan.FromMilliseconds(220);
+        private bool _suppressAutoHide;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -57,7 +70,15 @@ namespace LineBuddy
             
             // Setup window
             Style = (Style)Application.Current.Resources["ModernWindowStyle"];
+            // Ensure crisp layout on all DPIs
+            UseLayoutRounding = true;
+            SnapsToDevicePixels = true;
             SetupWindow();
+
+            // Auto-hide wiring (minimal, no template changes)
+            _autoHideTimer.Tick += AutoHideTimer_Tick;
+            _autoHideTimer.Start();
+            MouseEnter += (_, __) => ShowBar();
             
             // Setup timer for system monitoring
             _updateTimer = new DispatcherTimer
@@ -83,6 +104,80 @@ namespace LineBuddy
             this.StateChanged += MainWindow_StateChanged;
         }
 
+        private void AutoHideTimer_Tick(object sender, EventArgs e)
+        {
+            if (_suppressAutoHide || HasVisibleOwnedWindow())
+            {
+                ShowBar();
+                return;
+            }
+            // If mouse is over the window, ensure shown
+            if (IsMouseOver)
+            {
+                ShowBar();
+                return;
+            }
+
+            // Get global cursor position
+            if (GetCursorPos(out var pt))
+            {
+                // When cursor touches very top of screen, show
+                if (pt.Y <= 1)
+                {
+                    ShowBar();
+                }
+                else if (!_isAutoHidden)
+                {
+                    // Hide when cursor leaves top area and not hovering window
+                    HideBar();
+                }
+            }
+        }
+
+        private void ShowBar()
+        {
+            if (_isAnimating) return;
+            if (_isAutoHidden)
+            {
+                Visibility = Visibility.Visible;
+                Topmost = true;
+                AnimateTop(toTop: 0, onCompleted: () =>
+                {
+                    _isAutoHidden = false;
+                });
+            }
+        }
+
+        private void HideBar()
+        {
+            if (_isAnimating) return;
+            // Fully collapse to release space for other apps after sliding out
+            var target = -Height; // slide up out of view
+            AnimateTop(toTop: target, onCompleted: () =>
+            {
+                Topmost = false;
+                Visibility = Visibility.Collapsed;
+                _isAutoHidden = true;
+            });
+        }
+
+        private void AnimateTop(double toTop, Action onCompleted)
+        {
+            _isAnimating = true;
+            var anim = new DoubleAnimation
+            {
+                To = toTop,
+                Duration = SlideDuration,
+                EasingFunction = new QuadraticEase { EasingMode = EasingMode.EaseInOut }
+            };
+            anim.Completed += (_, __) =>
+            {
+                _isAnimating = false;
+                onCompleted?.Invoke();
+            };
+            BeginAnimation(Window.TopProperty, anim, HandoffBehavior.SnapshotAndReplace);
+        }
+
         private void MainWindow_StateChanged(object sender, EventArgs e)
         {
             if (WindowState == WindowState.Minimized)
@@ -100,6 +195,12 @@ namespace LineBuddy
             // Set window size and position at the very top
             Width = SystemParameters.PrimaryScreenWidth;
             var dynamicHeight = Math.Round(SystemParameters.PrimaryScreenHeight * 0.08);
+            // Counteract per-monitor DPI so visual size matches 100% scaling
+            var dpi = VisualTreeHelper.GetDpi(this);
+            if (dpi.DpiScaleY > 0)
+            {
+                dynamicHeight = Math.Round(dynamicHeight / dpi.DpiScaleY);
+            }
             if (dynamicHeight < 32) dynamicHeight = 32;
             if (dynamicHeight > 120) dynamicHeight = 120;
             Height = dynamicHeight;
@@ -116,8 +217,33 @@ namespace LineBuddy
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            // Use the new AppBarManager for proper AppBar registration
-            _appBarManager.RegisterAppBar(this);
+            // Overlay mode: do not register AppBar to avoid reserving desktop space
+            Left = 0;
+            Top = 0;
+            Width = SystemParameters.PrimaryScreenWidth;
+            Topmost = true;
+
+            // Apply background from settings (default opaque black)
+            try
+            {
+                var color = (Color)ColorConverter.ConvertFromString(_settings.OverlayBackgroundHex ?? "#FF000000");
+                Background = new SolidColorBrush(color);
+            }
+            catch
+            {
+                Background = new SolidColorBrush(Colors.Black);
+            }
+
+            // Suppress auto-hide while the settings/context menu is open
+            try
+            {
+                if (SettingsButton?.ContextMenu != null)
+                {
+                    SettingsButton.ContextMenu.Opened += (_, __) => { _suppressAutoHide = true; ShowBar(); };
+                    SettingsButton.ContextMenu.Closed += (_, __) => { _suppressAutoHide = false; };
+                }
+            }
+            catch { /* ignore if template changes */ }
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -563,9 +689,19 @@ namespace LineBuddy
 
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            var settingsWindow = new SettingsWindow(_settings, OnSettingsChanged);
-            settingsWindow.Owner = this;
-            settingsWindow.ShowDialog();
+            _suppressAutoHide = true;
+            try
+            {
+                var settingsWindow = new SettingsWindow(_settings, OnSettingsChanged);
+                settingsWindow.Owner = this;
+                ShowBar();
+                settingsWindow.ShowDialog();
+            }
+            finally
+            {
+                _suppressAutoHide = false;
+                ShowBar();
+            }
         }
         
         private void About_Click(object sender, RoutedEventArgs e)
@@ -605,6 +741,14 @@ namespace LineBuddy
             
             // Force immediate message update
             UpdateDynamicMessage(null, null);
+
+            // Apply overlay background immediately
+            try
+            {
+                var color = (Color)ColorConverter.ConvertFromString(_settings.OverlayBackgroundHex ?? "#FF000000");
+                Background = new SolidColorBrush(color);
+            }
+            catch { }
         }
 
         private void Minimize_Click(object sender, RoutedEventArgs e)
@@ -805,6 +949,15 @@ namespace LineBuddy
                 glowEffect.Opacity = 0;
                 glowEffect.BlurRadius = 5;
             }
+        }
+
+        private bool HasVisibleOwnedWindow()
+        {
+            foreach (Window w in this.OwnedWindows)
+            {
+                if (w.IsVisible) return true;
+            }
+            return false;
         }
     }
 }

@@ -195,6 +195,39 @@
                 </StackPanel>
             </GroupBox>
 
+            <!-- General (Appearance) -->
+            <GroupBox Header="Overlay background" Foreground="White" Margin="0,0,0,15">
+                <StackPanel Margin="10">
+                    <Label Content="Overlay background (HEX):" Foreground="White" Margin="0,0,0,5"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <TextBox x:Name="OverlayBgTextBox"
+                                 Width="140"
+                                 Background="#FF3F3F46"
+                                 Foreground="White"
+                                 BorderBrush="#FF686868"
+                                 Margin="0,0,10,0"
+                                 ToolTip="#FF000000 for opaque black"
+                                 TextChanged="OverlayBgTextBox_TextChanged"/>
+                        <Border x:Name="OverlayPreview" Width="36" Height="18" BorderBrush="#FF686868" BorderThickness="1" Margin="0,0,10,0"/>
+                        <Button x:Name="OverlayPickBtn" Content="Pick color" Click="OverlayPickBtn_Click" Background="#FF3F3F46" Foreground="White" BorderBrush="#FF686868" Padding="8,2"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Label Content="Opacity:" Foreground="White" Margin="0,0,8,0"/>
+                        <Slider x:Name="OverlayAlphaSlider" Minimum="0" Maximum="255" Width="160" ValueChanged="OverlayAlphaSlider_ValueChanged"/>
+                        <TextBlock x:Name="OverlayAlphaLabel" Foreground="White" Margin="8,0,0,0"/>
+                    </StackPanel>
+                    <Label Content="Quick colors:" Foreground="White" Margin="0,10,0,5"/>
+                    <WrapPanel>
+                        <Button Width="22" Height="22" Margin="0,0,6,6" Background="#FF000000" Tag="#FF000000" Click="OverlayColorPreset_Click"/>
+                        <Button Width="22" Height="22" Margin="0,0,6,6" Background="#FF1F2937" Tag="#FF1F2937" Click="OverlayColorPreset_Click"/>
+                        <Button Width="22" Height="22" Margin="0,0,6,6" Background="#FF111827" Tag="#FF111827" Click="OverlayColorPreset_Click"/>
+                        <Button Width="22" Height="22" Margin="0,0,6,6" Background="#FF3F3F46" Tag="#FF3F3F46" Click="OverlayColorPreset_Click"/>
+                        <Button Width="22" Height="22" Margin="0,0,6,6" Background="#FF000000" Tag="#FF000000" Click="OverlayColorPreset_Click"/>
+                    </WrapPanel>
+                    <TextBlock Text="Pick a preset or enter a HEX. Opacity adjusts the first AA in #AARRGGBB." Foreground="Gray" FontSize="11" Margin="0,6,0,0"/>
+                </StackPanel>
+            </GroupBox>
+
             <!-- Personality Selection -->
             <GroupBox Header="AI Personality" Foreground="White" Margin="0,0,0,15">
                 <StackPanel Margin="10">
@@ -626,26 +659,27 @@
                                     <ComboBoxItem Content="OpenAI GPT (Fast)" Tag="openai"/>
                                     <ComboBoxItem Content="Anthropic Claude (Fast)" Tag="anthropic"/>
                                 </ComboBox>
-                                             
+                                
                                 <Label Content="API Key:" Foreground="White" Margin="0,15,0,5"/>
                                 <PasswordBox x:Name="LLMApiKeyPasswordBox" 
                                              Background="#FF3F3F46" 
                                              Foreground="White" 
                                              BorderBrush="#FF686868"
                                              Margin="0,0,0,10"/>
-                                             
+                                
                                 <TextBlock Text="💡 Get your API key from your provider's dashboard" 
                                            Foreground="Orange" 
                                            FontSize="11" 
                                            Margin="0,0,0,10"/>
-                                           
+                                
                                 <TextBlock x:Name="AutoModelInfo" 
-                                           Text="� Using optimized fast model for best performance" 
+                                           Text=" Using optimized fast model for best performance" 
                                            Foreground="LightGreen" 
                                            FontSize="11" 
                                            Margin="0,0,0,10"/>
                             </StackPanel>
                         </GroupBox>
+                        
                         
                         <!-- Provider-Specific Help -->
                         <GroupBox Header="Provider Setup Help" Foreground="White" Margin="0,0,0,15">

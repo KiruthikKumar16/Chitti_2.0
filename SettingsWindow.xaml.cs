@@ -7,6 +7,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using LineBuddy.Services;
 using LineBuddy.Models;
+using Forms = System.Windows.Forms;
 
 namespace LineBuddy
 {
@@ -68,6 +69,55 @@ namespace LineBuddy
             
             // Load personality settings
             LoadPersonalitySettings();
+
+            // Populate recent color presets (first five buttons in the WrapPanel under General)
+            try
+            {
+                var wrapPanel = FindQuickColorsWrapPanel();
+                if (wrapPanel != null && _settings.OverlayRecentColors != null)
+                {
+                    for (int i = 0; i < wrapPanel.Children.Count && i < _settings.OverlayRecentColors.Count; i++)
+                    {
+                        if (wrapPanel.Children[i] is Button b)
+                        {
+                            var hex = _settings.OverlayRecentColors[i];
+                            b.Tag = hex;
+                            b.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString(hex));
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private WrapPanel FindQuickColorsWrapPanel()
+        {
+            // OverlayPreview is near the WrapPanel in the visual tree; navigate up then find first WrapPanel sibling
+            try
+            {
+                if (OverlayPreview != null)
+                {
+                    var parent = VisualTreeHelper.GetParent(OverlayPreview);
+                    while (parent != null && parent is not StackPanel)
+                    {
+                        parent = VisualTreeHelper.GetParent(parent);
+                    }
+                    // parent is StackPanel containing our appearance controls; next sibling should be the WrapPanel label + WrapPanel
+                    var generalGroup = parent as StackPanel;
+                }
+            }
+            catch { }
+            // Fallback: search entire window
+            WrapPanel found = null;
+            void Walk(DependencyObject d)
+            {
+                if (d == null || found != null) return;
+                if (d is WrapPanel wp && wp.Children.OfType<Button>().Any()) { found = wp; return; }
+                int count = VisualTreeHelper.GetChildrenCount(d);
+                for (int i = 0; i < count; i++) Walk(VisualTreeHelper.GetChild(d, i));
+            }
+            Walk(this);
+            return found;
         }
 
         private void IntervalSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -440,6 +490,36 @@ namespace LineBuddy
             // Load API key
             LLMApiKeyPasswordBox.Password = _settings.LLMApiKey;
             
+            // Load overlay background hex
+            if (OverlayBgTextBox != null)
+            {
+                OverlayBgTextBox.Text = _settings.OverlayBackgroundHex ?? "#FF000000";
+                // Initialize opacity slider from AA
+                try
+                {
+                    var hex = OverlayBgTextBox.Text.Trim();
+                    if (hex.Length == 7 && hex.StartsWith("#")) hex = "#FF" + hex.Substring(1);
+                    if (hex.Length == 9 && hex.StartsWith("#"))
+                    {
+                        var aa = Convert.ToInt32(hex.Substring(1, 2), 16);
+                        if (OverlayAlphaSlider != null)
+                        {
+                            OverlayAlphaSlider.Value = aa;
+                            OverlayAlphaLabel.Text = aa.ToString("D3");
+                        }
+                    }
+                    ApplyOverlayPreview(hex);
+                }
+                catch { }
+                // Initialize quick colors from recent
+                try
+                {
+                    var recents = (_settings.OverlayRecentColors ?? new System.Collections.Generic.List<string>()).Take(5).ToList();
+                    var wrap = FindName("OverlayBgTextBox") as TextBox; // anchor
+                }
+                catch { }
+            }
+
             // Show appropriate help panel
             UpdateProviderHelp(_settings.LLMProvider);
         }
@@ -474,6 +554,82 @@ namespace LineBuddy
                     break;
             }
         }
+
+        // Appearance helpers
+        private void OverlayColorPreset_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button b && b.Tag is string hex)
+            {
+                if (OverlayBgTextBox != null)
+                {
+                    OverlayBgTextBox.Text = hex;
+                }
+                ApplyOverlayPreview(hex);
+            }
+        }
+
+        private void OverlayBgTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var hex = OverlayBgTextBox?.Text ?? "#FF000000";
+            ApplyOverlayPreview(hex);
+        }
+
+        private void OverlayAlphaSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (OverlayBgTextBox == null) return;
+            var hex = OverlayBgTextBox.Text?.Trim();
+            if (string.IsNullOrWhiteSpace(hex)) hex = "#FF000000";
+            try
+            {
+                // Normalize to #AARRGGBB
+                if (hex.Length == 7 && hex.StartsWith("#"))
+                {
+                    hex = "#FF" + hex.Substring(1);
+                }
+                if (hex.Length == 9 && hex.StartsWith("#"))
+                {
+                    var aa = ((int)e.NewValue).ToString("X2");
+                    hex = "#" + aa + hex.Substring(3);
+                    OverlayBgTextBox.Text = hex;
+                    OverlayAlphaLabel.Text = aa;
+                    ApplyOverlayPreview(hex);
+                }
+            }
+            catch { }
+        }
+
+        private void ApplyOverlayPreview(string hex)
+        {
+            try
+            {
+                if (OverlayPreview != null)
+                {
+                    var color = (Color)ColorConverter.ConvertFromString(hex);
+                    OverlayPreview.Background = new SolidColorBrush(color);
+                }
+            }
+            catch { }
+        }
+
+        private void OverlayPickBtn_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                using var dlg = new Forms.ColorDialog
+                {
+                    FullOpen = true
+                };
+                if (dlg.ShowDialog() == Forms.DialogResult.OK)
+                {
+                    // Use current alpha slider value for AA
+                    var aa = OverlayAlphaSlider != null ? ((int)OverlayAlphaSlider.Value).ToString("X2") : "FF";
+                    var hex = $"#{aa}{dlg.Color.R:X2}{dlg.Color.G:X2}{dlg.Color.B:X2}";
+                    if (OverlayBgTextBox != null) OverlayBgTextBox.Text = hex;
+                    ApplyOverlayPreview(hex);
+                }
+            }
+            catch { }
+        }
         
         private void SaveLLMSettings()
         {
@@ -500,6 +656,22 @@ namespace LineBuddy
             // Save API key
             _settings.LLMApiKey = LLMApiKeyPasswordBox.Password;
             _settings.LLMBaseUrl = ""; // Not needed for API providers
+
+            // Save overlay background hex
+            if (OverlayBgTextBox != null)
+            {
+                var hex = (OverlayBgTextBox.Text ?? "").Trim();
+                if (!string.IsNullOrWhiteSpace(hex))
+                {
+                    _settings.OverlayBackgroundHex = hex;
+                    // Update recents (most recent first, unique, max 5)
+                    if (_settings.OverlayRecentColors == null)
+                        _settings.OverlayRecentColors = new System.Collections.Generic.List<string>();
+                    _settings.OverlayRecentColors.RemoveAll(c => string.Equals(c, hex, StringComparison.OrdinalIgnoreCase));
+                    _settings.OverlayRecentColors.Insert(0, hex);
+                    while (_settings.OverlayRecentColors.Count > 5) _settings.OverlayRecentColors.RemoveAt(_settings.OverlayRecentColors.Count - 1);
+                }
+            }
         }
     }
 }

@@ -69,6 +69,13 @@ namespace LineBuddy
         public List<string> CryptoWatchlist { get; set; } = new() { "bitcoin", "ethereum", "dogecoin" };
         public string WeatherLocation { get; set; } = "London";
         
+        // UI appearance
+        public string OverlayBackgroundHex { get; set; } = "#FF000000"; // default opaque black
+        public List<string> OverlayRecentColors { get; set; } = new()
+        {
+            "#FF000000", "#FF1F2937", "#FF111827", "#FF3F3F46", "#FF000000"
+        };
+        
         // Automation & Safety
         public bool AllowRiskyActionsWithConfirmation { get; set; } = true;
         public bool EnableMediaActions { get; set; } = true;

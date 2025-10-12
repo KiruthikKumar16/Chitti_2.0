@@ -17,9 +17,10 @@
         </Grid.RowDefinitions>
         
         <!-- Tabbed Content -->
-        <TabControl Grid.Row="0" Background="#FF1A1A1A" BorderThickness="0" Margin="8">
+        <TabControl x:Name="TabControl" Grid.Row="0" Background="#FF1A1A1A" BorderThickness="0" Margin="8">
             <TabControl.Resources>
                 <Style TargetType="TabItem">
+                    <Setter Property="Foreground" Value="White"/>
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="TabItem">

@@ -11,6 +11,9 @@ namespace LineBuddy
     /// </summary>
     public partial class InfoWindow : Window
     {
+        private static InfoWindow _instance;
+        private static readonly object _lock = new object();
+
         public InfoWindow(int selectedTab = 0)
         {
             InitializeComponent();
@@ -18,11 +21,7 @@ namespace LineBuddy
             // Set initial tab
             if (selectedTab >= 0 && selectedTab < 3)
             {
-                var tabControl = (TabControl)this.FindName("TabControl");
-                if (tabControl != null && selectedTab < tabControl.Items.Count)
-                {
-                    tabControl.SelectedIndex = selectedTab;
-                }
+                TabControl.SelectedIndex = selectedTab;
             }
             
             // Setup window behavior
@@ -81,20 +80,45 @@ namespace LineBuddy
         // Static methods to open specific tabs from MainWindow
         public static void ShowAbout()
         {
-            var window = new InfoWindow(0);
-            window.Show();
+            ShowWindow(0);
         }
 
         public static void ShowHowToUse()
         {
-            var window = new InfoWindow(1);
-            window.Show();
+            ShowWindow(1);
         }
 
         public static void ShowContribute()
         {
-            var window = new InfoWindow(2);
-            window.Show();
+            ShowWindow(2);
+        }
+
+        private static void ShowWindow(int selectedTab)
+        {
+            lock (_lock)
+            {
+                if (_instance == null || !_instance.IsVisible)
+                {
+                    _instance = new InfoWindow(selectedTab);
+                    _instance.Show();
+                }
+                else
+                {
+                    // Window already exists, just switch to the requested tab
+                    _instance.TabControl.SelectedIndex = selectedTab;
+                    _instance.Activate();
+                    _instance.Focus();
+                }
+            }
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            lock (_lock)
+            {
+                _instance = null;
+            }
+            base.OnClosed(e);
         }
     }
 }
